@@ -122,7 +122,7 @@ struct ProfileView: View {
     }
 }
 
-// MARK: - First-Time Setup Sheet
+// First-Time Setup Sheet
 struct FirstTimeSetupView: View {
     @Binding var name: String
     @Binding var selectedLocation: String
@@ -216,7 +216,7 @@ struct FirstTimeSetupView: View {
     }
 }
 
-// MARK: - Edit Profile Options View
+// Edit Profile Options View
 struct EditProfileOptionsView: View {
     @Binding var name: String
     @Binding var selectedLocation: String
@@ -281,7 +281,7 @@ struct EditProfileOptionsView: View {
     }
 }
 
-// MARK: - New Edit Name View
+// New Edit Name View
 struct EditNameView: View {
     @Binding var name: String
     
@@ -310,7 +310,7 @@ struct EditNameView: View {
     }
 }
 
-// MARK: - Allergy Selection Sheet
+// Allergy Selection Sheet
 struct AllergySelectionView: View {
     @Binding var selectedAllergies: [String]
     @Environment(\.presentationMode) var presentationMode // For dismissing the view
@@ -349,7 +349,7 @@ struct AllergySelectionView: View {
     }
 }
 
-// MARK: - Location Picker Sheet
+// Location Picker Sheet
 struct LocationPickerView: View {
     @Binding var selectedLocation: String
     @State private var searchText = ""
