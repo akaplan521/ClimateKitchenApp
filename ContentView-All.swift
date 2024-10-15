@@ -304,14 +304,13 @@ struct SearchView: View {
                 ScrollView {
                     VStack(spacing: 10) {
                         ForEach(filteredIngredients.indices, id: \.self) { index in
-                            Button(action: {
-                                //TODO: nav to ingredient "page"
-                            }) {
+                            NavigationLink(destination: IngredientDetailView(ingredient: filteredIngredients[index])) {
                                 Text(filteredIngredients[index].name)
                                     .padding()
                                     .frame(maxWidth: .infinity)
                                     .background(index == 0 ? Color(.systemBlue).opacity(0.3) : Color(.systemGray5))
                                     .cornerRadius(10)
+                                    .foregroundColor(.black) // Ensures text is visible
                             }
                         }
                     }
