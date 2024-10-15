@@ -324,6 +324,25 @@ struct SearchView: View {
     }
 }
 
+struct IngredientDetailView: View {
+    let ingredient: Ingredient
+
+    var body: some View {
+        VStack {
+            Text(ingredient.name)
+                .font(.largeTitle)
+                .padding()
+
+            Text(ingredient.info)
+                .font(.body)
+                .padding()
+
+            Spacer()
+        }
+        .navigationTitle("Ingredient Info")
+    }
+}
+
 // Abi: how to make a check box https://www.appcoda.com/swiftui-checkbox/
 struct CheckboxToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
