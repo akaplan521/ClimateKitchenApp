@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  Climate Kitchen
 //
-//  Created by Catherine Crowell on 10/10/24.
+//  Created on 10/10/24.
 //
 
 import SwiftUI
