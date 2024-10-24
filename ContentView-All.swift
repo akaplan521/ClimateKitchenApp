@@ -481,15 +481,15 @@ struct RecipeCreateView: View {
             }
         }
         // when Done is clicked, this will redirect to recipe home and eventually save recipe info
-        NavigationLink(destination: RecipeHomeView().navigationBarBackButtonHidden(true)) {
-            Text("Done")
-                .font(.headline)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.blue.opacity(0.2))
-                .foregroundColor(.black)
-                .cornerRadius(10)
+        Button("Done") {
+            dismiss()
         }
+        .font(.headline)
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(Color.blue.opacity(0.2))
+        .foregroundColor(.black)
+        .cornerRadius(10)
         .padding(.horizontal, 40)
         .padding(.bottom, 20)
     }
