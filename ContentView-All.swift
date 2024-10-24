@@ -36,31 +36,54 @@ struct HomeView: View {
                     
                     // Recipe Buttons
                     VStack(spacing: 15) {
-                        Button("Winter Squash Risotto with Sage") {
-                            // action
+                        HStack(spacing: 15) {
+                            NavigationLink(destination: RecipeView().navigationBarBackButtonHidden(false)) {
+                                Text("Winter Squash Risotto")
+                                    .font(.headline)
+                                    .foregroundColor(.black)
+                                    .padding()
+                                    .frame(maxWidth: 150, maxHeight: 100, alignment: .center)
+                                    .background(Color.green.opacity(0.2))
+                                    .cornerRadius(10)
+                            }
+                                
+                            NavigationLink(destination: RecipeView().navigationBarBackButtonHidden(false)) {
+                                Text("Viniagrette")
+                                    .font(.headline)
+                                    .foregroundColor(.black)
+                                    .padding()
+                                    .frame(maxWidth: 150, maxHeight: 100, alignment: .center)
+                                    .background(Color.green.opacity(0.2))
+                                    .cornerRadius(10)
+                            }
                         }
-                        .buttonStyle(SIButtonStyle())
                         
-                        Button("Vinaigrette") {
-                            // action
-                        }
-                        .buttonStyle(SIButtonStyle())
+                        Text("Popular")
+                            .font(.system(size: 30, weight: .bold))
                         
-                        Button("Garden Salad") {
-                            // action
-                        }
-                        .buttonStyle(SIButtonStyle())
-                        
-                        Button("Cacio e Pepe Pasta") {
-                            // action
-                        }
-                        .buttonStyle(SIButtonStyle())
-                        
-                        Button("Roasted Root Vegetables") {
-                            // action
-                        }
-                        .buttonStyle(SIButtonStyle())
+                        HStack(spacing: 15) {
+                            NavigationLink(destination: RecipeView().navigationBarBackButtonHidden(false)) {
+                                Text("Garden Salad")
+                                    .font(.headline)
+                                    .foregroundColor(.black)
+                                    .padding()
+                                    .frame(maxWidth: 150, maxHeight: 100, alignment: .center)
+                                    .background(Color.green.opacity(0.2))
+                                    .cornerRadius(10)
+                            }
+                            
+                            NavigationLink(destination: RecipeView().navigationBarBackButtonHidden(false)) {
+                                Text("Roasted Root Vegetables")
+                                    .font(.headline)
+                                    .foregroundColor(.black)
+                                    .padding()
+                                    .frame(maxWidth: 150, maxHeight: 100, alignment: .center)
+                                    .background(Color.green.opacity(0.2))
+                                    .cornerRadius(10)
+                            }
+                            }
                     }
+
                     .padding(.bottom, 10)
                 }
                 .padding()
@@ -98,7 +121,6 @@ struct HomeView: View {
         }
     }
 }
-
 // Catie: About CK page
 struct AboutUsView: View {
     var body: some View {
@@ -248,19 +270,6 @@ struct BottomNavigationBar: View {
         .padding()
         .background(Color.black.opacity(0.05))
         .frame(maxWidth: .infinity)
-    }
-}
-
-// Catie: Seasonal inspiration recipe buttons
-struct SIButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.headline)
-            .foregroundColor(.black)
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color.green.opacity(0.2))
-            .cornerRadius(10)
     }
 }
 
