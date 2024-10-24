@@ -412,6 +412,8 @@ struct RecipeCreateView: View {
     @State private var newInstruction = ""
     @State private var ingredients : [String] =  []
     @State private var instructions : [String] = []
+
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationView {
