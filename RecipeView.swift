@@ -635,7 +635,7 @@ struct RecipeView: View {
     
     }
     
-   
+   BottomNavigationBar()
 }
 
 #Preview {
