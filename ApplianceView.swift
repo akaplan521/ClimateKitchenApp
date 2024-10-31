@@ -1,3 +1,6 @@
+import SwiftUI
+import UIKit
+
 // Abi: Appliances page
 struct ApplianceView: View {
     // TODO: This will need to be figured out: type of appliances, only allow one button
