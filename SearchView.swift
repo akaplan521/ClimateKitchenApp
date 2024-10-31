@@ -1,21 +1,13 @@
-//
-//  ContentView.swift
-//  climatekitchen
-//
-//  Created by user266919 on 10/13/24.
-//
-
-import SwiftUI
-
-//temp cause might have dif vars
+// Alexa: temp cause might have dif vars
 struct Ingredient: Identifiable {
     let id = UUID()
     let name: String
     let info: String
 }
 
+// Alexa: Search page
 struct SearchView: View {
-    var searchText = ""
+    @State var searchText = ""
     var ingredients: [Ingredient] = [
         Ingredient(name: "Carrot", info: "blah carrot"),
         Ingredient(name: "Tomato", info: "blah tomato"),
@@ -26,7 +18,7 @@ struct SearchView: View {
     var filteredIngredients: [Ingredient] {
         if searchText.isEmpty {
             return ingredients
-        } 
+        }
         else {
             return ingredients.filter { $0.name.lowercased().contains(searchText.lowercased()) }
         }
@@ -46,34 +38,21 @@ struct SearchView: View {
                 ScrollView {
                     VStack(spacing: 10) {
                         ForEach(filteredIngredients.indices, id: \.self) { index in
-                            Button(action: {
-                                //TODO: nav to ingredient "page"
-                            }) {
+                            NavigationLink(destination: IngredientDetailView(ingredient: filteredIngredients[index])) {
                                 Text(filteredIngredients[index].name)
                                     .padding()
                                     .frame(maxWidth: .infinity)
                                     .background(index == 0 ? Color(.systemBlue).opacity(0.3) : Color(.systemGray5))
                                     .cornerRadius(10)
+                                    .foregroundColor(.black) // Ensures text is visible
                             }
                         }
                     }
                     .padding(.horizontal)
                 }
+                BottomNavigationBar()
             }
             .navigationTitle("Search Ingredients")
         }
-    }
-}
-
-struct ContentView: View {
-    var body: some View {
-        //for testing
-        SearchView()
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
     }
 }
