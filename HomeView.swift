@@ -114,3 +114,43 @@ struct HomeView: View {
         }
     }
 }
+
+// Catie: Bottom menu bar
+struct BottomNavigationBar: View {
+    var body: some View {
+        HStack {
+            Spacer()
+            // Home
+            NavigationLink(destination: HomeView().navigationBarBackButtonHidden(true)) {
+                Image(systemName: "house.fill")
+                    .foregroundColor(.black)
+            }
+            Spacer()
+            // Search
+            NavigationLink(destination: SearchView().navigationBarBackButtonHidden(true)) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.black)
+            }
+            Spacer()
+            // Recipe
+            NavigationLink(destination: RecipeHomeView().navigationBarBackButtonHidden(true)) {
+                Image(systemName: "book.fill")
+                    .foregroundColor(.black)
+            }
+            Spacer()
+            // Profile
+            NavigationLink(destination: ProfileView().navigationBarBackButtonHidden(true)) {
+                Image(systemName: "person.fill")
+                    .foregroundColor(.black)
+            }
+            Spacer()
+        }
+        .padding()
+        .background(Color.black.opacity(0.05))
+        .frame(maxWidth: .infinity)
+    }
+}
+
+#Preview {
+    ContentView().environmentObject(Settings())
+}
