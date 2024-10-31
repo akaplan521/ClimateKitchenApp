@@ -1,3 +1,7 @@
+import SwiftUI
+import UIKit
+
+// Alexa: Individual ingredient page
 struct IngredientDetailView: View {
     let ingredient: Ingredient
 
