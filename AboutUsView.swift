@@ -1,3 +1,6 @@
+import SwiftUI
+import UIKit
+
 // Catie: About CK page
 struct AboutUsView: View {
     var body: some View {
