@@ -630,12 +630,12 @@ struct RecipeView: View {
                     }
                 }
             }
-            
+            BottomNavigationBar()
         }
     
     }
     
-   BottomNavigationBar()
+   
 }
 
 #Preview {
