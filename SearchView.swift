@@ -1,3 +1,6 @@
+import SwiftUI
+import UIKit
+
 // Alexa: temp cause might have dif vars
 struct Ingredient: Identifiable {
     let id = UUID()
