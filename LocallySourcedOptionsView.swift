@@ -1,3 +1,6 @@
+import SwiftUI
+import UIKit
+
 // Catie: Local options page
 struct LocallySourcedOptionsView: View {
     var body: some View {
