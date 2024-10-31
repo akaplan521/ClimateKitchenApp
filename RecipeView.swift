@@ -1,14 +1,5 @@
-//
-//  ContentView.swift
-//  ContextView
-//
-//  Created by awrigh30on 10/9/24.
-//
-
-import SwiftUI
-import UIKit
-
-// how to make a check box https://www.appcoda.com/swiftui-checkbox/
+// Abi: Recipe page
+// Abi: how to make a check box https://www.appcoda.com/swiftui-checkbox/
 struct CheckboxToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack {
@@ -28,46 +19,19 @@ struct CheckboxToggleStyle: ToggleStyle {
         }
     }
 }
-struct ApplianceView: View {
-    // TODO: This will need to be figured out: type of appliances, only allow one button
-    let applianceType = ["Gas", "Electric","Induction"]
-    @State private var isChecked = [false,false,false]
-    @State private var countChecked = 0
-    var body: some View {
-        Text("By choosing a appliance, the energy usage will be enabled using universal metrics. This will be represented in your profile if you choose I MADE THIS , recipe").lineSpacing(10)
-        ForEach(applianceType.indices, id: \.self) { index in
-            // allow user to choose appliance type
-            HStack {
-                if countChecked == 0{
-                    Toggle(isOn: $isChecked[index]) {
-                        Text(self.applianceType[index])
-                        
-                    }.toggleStyle(CheckboxToggleStyle())
-                }
-                    
-            }
-        }
-        
-    }
-}
-struct NutrientView: View {
-    var home : ContentView!
-    // TODO: Nutrition for this Ingredient
-    var body: some View {
-        Text("FACTS").lineSpacing(10)
-    }
-}
-struct ContentView: View {
+
+struct RecipeView: View {
     
     @State private var value = 0
-    static var MAXVAL = 5
+    @State private var sesonal = [true, true,true, false, false]
+    @State private var isChecked = [false,false,false,false, false]
     @State  var useRed = false
+
+    static var MAXVAL = 5
     
     //TODO: These will get read in from database, is checked will be all set to false with length of ingredients
-    @State private var isChecked = [false,false,false,false, false]
     let ingredients = [("1","Carrot"), ("2-3","Beets"),("1", "Parsnip"),("3-4 T","Olive Oil" ), ("Dash", "Salt")]
     let recipeTitle = "Roasted Root Vegetables"
-    @State private var sesonal = [true, true,true, false, false]
     let instructions = [("1.", "Preheat the oven to 425°F."),("2.","Wash, peel and cut veggies."),("3.", "On a low-sided baking sheet, toss veggies together with salt and olive oil. Spread them out and roast until browned and tender, 25-30 minutes.")]
     
     var body: some View {
@@ -133,27 +97,11 @@ struct ContentView: View {
                                 
                             }
                         }
-                        
-                        
-                        
-                    }
-                    
-                    
-                    
+                    }                    
                 }
             }
-            }
-            
+            //BottomNavigationBar()
+            }           
         }
-        
-
-    }
-    
-   
+    }  
 }
-
-#Preview {
-    ContentView()
-        
-}
-
