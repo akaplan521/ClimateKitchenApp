@@ -1,5 +1,7 @@
-//Abi:
-// Nutrition facts page
+import SwiftUI
+import UIKit
+
+//Abi: Nutrition facts page
 struct NutrientView: View {
     var home : ContentView!
     // TODO: Nutrition for this Ingredient
