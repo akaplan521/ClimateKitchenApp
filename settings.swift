@@ -18,6 +18,7 @@ class Settings: ObservableObject {
     @Published var aroma: [String]
     @Published var flavor: [String]
     @Published var texture: [String]
+    @Published var rating: Int
 
     // zip code or geolocation
     @Published var location: Int
@@ -31,5 +32,6 @@ class Settings: ObservableObject {
         self.aroma = []
         self.flavor = []
         self.texture = []
+        self.rating = 0
     }
 }

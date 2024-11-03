@@ -32,7 +32,9 @@ struct CheckboxToggleStyle: ToggleStyle {
 
 struct RecipeView: View {
     @EnvironmentObject var settings: Settings
+    @State private var fillColor = [Color.black,Color.black,Color.black,Color.black,Color.black]
     @State private var isEditing = false
+    @State private var isTapped = false
     //TODO: These will get read in from database, is checked will be all set to false with length of ingredients
     @State private var isChecked = [false,false,false,false, false]
     let ingredients = [("1","Carrot"), ("2-3","Beets"),("1", "Parsnip"),("3-4 T","Olive Oil" ), ("Dash", "Salt")]
@@ -41,6 +43,32 @@ struct RecipeView: View {
     let instructions = [("1.", "Preheat the oven to 425°F."),
                         ("2.","Wash, peel and cut veggies."),
                         ("3.", "On a low-sided baking sheet, toss veggies together with salt and olive oil. Spread them out and roast until browned and tender, 25-30 minutes.")]
+    
+    
+    // this function changes the star colors
+    func changeStars(num : Int){
+        if fillColor[num] == Color.black{
+            for number in 0...num{
+                if fillColor[number] == Color.black{
+                    fillColor[number] = Color.yellow
+                }
+            }
+        }
+        else{
+            for number in num...4{
+                if fillColor[number] == Color.yellow{
+                    fillColor[number] = Color.black
+                }
+            }
+        }
+        var ratingCount = 0
+        for i in 0...4{
+            if fillColor[i] == Color.yellow{
+                ratingCount+=1
+            }
+        }
+        settings.rating = ratingCount
+    }
    
     
     var body: some View {
@@ -172,8 +200,32 @@ struct RecipeView: View {
                             NavigationLink(destination: Texture().environmentObject(Settings())) {
                                 Text("Texture").bold().frame(maxWidth: .infinity)
                             }
+                            HStack{
+                                Text("Tap For Rating").bold()
+                                // 1 star ranking
+                                Image(systemName: "star.fill").foregroundColor(fillColor[0]).onTapGesture(count: 2) {
+                                    changeStars(num:0)
+                                }
+                                // 2 star ranking
+                                Image(systemName: "star.fill").foregroundColor(fillColor[1]).onTapGesture(count: 2) {
+                                    changeStars(num:1)
+                                }
+                                // 3 star ranking
+                                Image(systemName: "star.fill").foregroundColor(fillColor[2]).onTapGesture(count: 2) {
+                                    changeStars(num:2)
+                                }
+                                // 4 star ranking
+                                Image(systemName: "star.fill").foregroundColor(fillColor[3]).onTapGesture(count: 2) {
+                                    changeStars(num:3)
+                                }
+                                // 5 star ranking
+                                Image(systemName: "star.fill").foregroundColor(fillColor[4]).onTapGesture(count: 2) {
+                                    changeStars(num : 4)
+                                }
+                                
+                            }.frame(maxWidth:.infinity)
                             
-                            
+                                                              
                             // TODO: add struct to do the math, then direct to home page
                             HStack(spacing:100){
                                 // Add all the stats to profile
@@ -194,5 +246,6 @@ struct RecipeView: View {
     
    
 }
+
 
 
