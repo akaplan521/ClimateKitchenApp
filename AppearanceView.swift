@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 
 // This view will allow user to choose food appearance desciptors, and add to settings
-struct Appearance: View {
+struct AppearanceView: View {
     @EnvironmentObject var settings: Settings
     @State private var foodApperance = [
         (1, "Appetizing"),(2, "Attractive"),(3, "Bright"),(4, "Browned"),
