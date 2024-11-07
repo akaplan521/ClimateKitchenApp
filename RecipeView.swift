@@ -35,19 +35,40 @@ struct RecipeView: View {
     @State private var fillColor = [Color.black,Color.black,Color.black,Color.black,Color.black]
     @State private var isEditing = false
     @State private var isTapped = false
+    @State private var preheatTime: Int?
     //TODO: These will get read in from database, is checked will be all set to false with length of ingredients
     @State private var isChecked = [false,false,false,false, false]
-    @State private var seasonal = [true, true,true, false, false]
-    
     let ingredients = [("1","Carrot"), ("2-3","Beets"),("1", "Parsnip"),("3-4 T","Olive Oil" ), ("Dash", "Salt")]
     let recipeTitle = "Roasted Root Vegetables"
+    let prepTime = 20
+    let cookTime = 30
+    @State private var sesonal = [true, true,true, false, false]
     let instructions = [("1.", "Preheat the oven to 425°F."),
                         ("2.","Wash, peel and cut veggies."),
                         ("3.", "On a low-sided baking sheet, toss veggies together with salt and olive oil. Spread them out and roast until browned and tender, 25-30 minutes.")]
-    
+    // This calculates the BTU used from appliance type, preheat time, and cook time
+    func calculateBTU (){
+        // default
+        if preheatTime == nil {
+            preheatTime = 0
+        }
+        if settings.applianceType == "Gas"{
+            
+            settings.btuUsed = 300.0*Float(preheatTime!+cookTime)
+        }
+        if settings.applianceType == "Electric"{
+            settings.btuUsed = 130.883925*Float(preheatTime!+cookTime)
+        }
+        if settings.applianceType == "Induction"{
+            settings.btuUsed = 283.33333*Float(preheatTime!+cookTime)
+            
+        }
+        print(settings.btuUsed)
+    }
     
     // this function changes the star colors
     func changeStars(num : Int){
+       
         if fillColor[num] == Color.black{
             for number in 0...num{
                 if fillColor[number] == Color.black{
@@ -93,7 +114,7 @@ struct RecipeView: View {
                                     // Toggle check box and if ingredient is seasonal or not
                                     // TODO: change color to display image
                                     Toggle(isOn: $isChecked[index]) {
-                                        if seasonal[index] == true{
+                                        if sesonal[index] == true{
                                             Text(self.ingredients[index].0)
                                             NavigationLink(destination: NutrientView()) {
                                                     Text(ingredients[index].1).foregroundColor(.green)
@@ -109,6 +130,7 @@ struct RecipeView: View {
                                     }.toggleStyle(CheckboxToggleStyle())
                                 }
                             }
+                            
                             // TODO: Instructions, centered it but can change
                             Text("Instructions").bold().frame(maxWidth: .infinity)
                             ForEach(instructions.indices, id: \.self) { index in
@@ -131,7 +153,7 @@ struct RecipeView: View {
                                     
                                 }
                             }
-                            
+                            TextField("Oven Preheat Time", value: $preheatTime, formatter: NumberFormatter())
                             // sliders for users to pick
                             // TODO: difficulty, centered it but can change
                             Text("Difficulty").bold().frame(maxWidth: .infinity)
@@ -183,22 +205,22 @@ struct RecipeView: View {
                             Text("Click On The Food Descriptors Below and Choose the Relevant Boxes").bold().frame(maxWidth: .infinity)
                             
                             
-                            NavigationLink(destination: AppearanceView().environmentObject(Settings())) {
+                            NavigationLink(destination: Appearance().environmentObject(Settings())) {
                                 Text("Appearance").bold().frame(maxWidth: .infinity)
                             }
                             
                             
-                            NavigationLink(destination: AromaView().environmentObject(Settings())) {
+                            NavigationLink(destination: Armoa().environmentObject(Settings())) {
                                 Text("Aroma").bold().frame(maxWidth: .infinity)
                             }
                             
                             
-                            NavigationLink(destination: FlavorView().environmentObject(Settings())) {
+                            NavigationLink(destination: Flavor().environmentObject(Settings())) {
                                 Text("Flavor").bold().frame(maxWidth: .infinity)
                             }
                             
                             
-                            NavigationLink(destination: TextureView().environmentObject(Settings())) {
+                            NavigationLink(destination: Texture().environmentObject(Settings())) {
                                 Text("Texture").bold().frame(maxWidth: .infinity)
                             }
                             HStack{
@@ -230,7 +252,7 @@ struct RecipeView: View {
                             // TODO: add struct to do the math, then direct to home page
                             HStack(spacing:100){
                                 // Add all the stats to profile
-                                Button("I MADE THIS"){
+                                Button("I MADE THIS"){calculateBTU ()
                                     
                                 }
                             }
