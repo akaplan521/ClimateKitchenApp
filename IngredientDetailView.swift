@@ -9,13 +9,6 @@ struct Nutrient: Identifiable {
     let unit: String
 }
 
-struct Ingredient: Identifiable {
-    let id = UUID()
-    let name: String
-    let info: String
-    var nutrients: [Nutrient]
-}
-
 struct IngredientDetailView: View {
     var ingredient: Ingredient
 
