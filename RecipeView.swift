@@ -37,9 +37,10 @@ struct RecipeView: View {
     @State private var isTapped = false
     //TODO: These will get read in from database, is checked will be all set to false with length of ingredients
     @State private var isChecked = [false,false,false,false, false]
+    @State private var seasonal = [true, true,true, false, false]
+    
     let ingredients = [("1","Carrot"), ("2-3","Beets"),("1", "Parsnip"),("3-4 T","Olive Oil" ), ("Dash", "Salt")]
     let recipeTitle = "Roasted Root Vegetables"
-    @State private var sesonal = [true, true,true, false, false]
     let instructions = [("1.", "Preheat the oven to 425°F."),
                         ("2.","Wash, peel and cut veggies."),
                         ("3.", "On a low-sided baking sheet, toss veggies together with salt and olive oil. Spread them out and roast until browned and tender, 25-30 minutes.")]
@@ -92,7 +93,7 @@ struct RecipeView: View {
                                     // Toggle check box and if ingredient is seasonal or not
                                     // TODO: change color to display image
                                     Toggle(isOn: $isChecked[index]) {
-                                        if sesonal[index] == true{
+                                        if seasonal[index] == true{
                                             Text(self.ingredients[index].0)
                                             NavigationLink(destination: NutrientView()) {
                                                     Text(ingredients[index].1).foregroundColor(.green)
@@ -182,22 +183,22 @@ struct RecipeView: View {
                             Text("Click On The Food Descriptors Below and Choose the Relevant Boxes").bold().frame(maxWidth: .infinity)
                             
                             
-                            NavigationLink(destination: Appearance().environmentObject(Settings())) {
+                            NavigationLink(destination: AppearanceView().environmentObject(Settings())) {
                                 Text("Appearance").bold().frame(maxWidth: .infinity)
                             }
                             
                             
-                            NavigationLink(destination: Armoa().environmentObject(Settings())) {
+                            NavigationLink(destination: AromaView().environmentObject(Settings())) {
                                 Text("Aroma").bold().frame(maxWidth: .infinity)
                             }
                             
                             
-                            NavigationLink(destination: Flavor().environmentObject(Settings())) {
+                            NavigationLink(destination: FlavorView().environmentObject(Settings())) {
                                 Text("Flavor").bold().frame(maxWidth: .infinity)
                             }
                             
                             
-                            NavigationLink(destination: Texture().environmentObject(Settings())) {
+                            NavigationLink(destination: TextureView().environmentObject(Settings())) {
                                 Text("Texture").bold().frame(maxWidth: .infinity)
                             }
                             HStack{
