@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 
 // This view will allow user to choose food texture desciptors, and add to settings
-struct Texture: View {
+struct TextureView: View {
     @EnvironmentObject var settings: Settings
     @State private var foodTexture = [
             (1, "Bouncy"),(2, "Brittle"),(3, "Bubbly"),(4, "Chewy"),
