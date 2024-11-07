@@ -10,28 +10,15 @@ struct Ingredient: Identifiable {
 
 // Alexa: Search page
 struct SearchView: View {
-    @State var searchText = ""
-    var ingredients: [Ingredient] = [
-        Ingredient(name: "Carrot", info: "blah carrot"),
-        Ingredient(name: "Tomato", info: "blah tomato"),
-        Ingredient(name: "Lettuce", info: "blah lettuce"),
-        //fake data will be from db once setup
-    ]
-    //show only ingredients with substring that was searched. not the functionality we want but is fine for now.
-    var filteredIngredients: [Ingredient] {
-        if searchText.isEmpty {
-            return ingredients
-        }
-        else {
-            return ingredients.filter { $0.name.lowercased().contains(searchText.lowercased()) }
-        }
-    }
+    @State private var searchText = ""
+    @State private var ingredients = [Ingredient]()
+    
 
     var body: some View {
         NavigationView {
             VStack {
                 //search Bar
-                TextField("Search for ingredients...", text: $searchText)
+                TextField("Search for ingredients...", text: $searchText, onCommit: fetchIngredients)
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(10)
