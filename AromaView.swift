@@ -1,5 +1,5 @@
 //
-//  Armoa.swift
+//  AromaView.swift
 //  recipe
 //
 //  Created by user268927 on 10/31/24.
@@ -8,7 +8,7 @@ import SwiftUI
 import UIKit
 
 // This view will allow user to choose food aroma desciptors, and add to settings
-struct Armoa: View {
+struct AromaView: View {
     @EnvironmentObject var settings: Settings
     @State private var foodAroma = [
             (1, "Acidic"),(2, "Acrid"),(3, "Bitter"),(4, "Bland"),
@@ -93,11 +93,8 @@ struct Armoa: View {
                         }
                     }
                 }
-            
-
                     
            }
-            BottomNavigationBar()
         }
         
         
