@@ -2,18 +2,34 @@ import SwiftUI
 import UIKit
 
 // Alexa: temp cause might have dif vars
+struct FoodDataResponse: Codable {
+    let foods: [Food]
+}
+
+struct Food: Codable {
+    let description: String
+    let foodCategory: String?
+}
+
 struct Ingredient: Identifiable {
     let id = UUID()
     let name: String
     let info: String
+    var nutrients: [Nutrient]
 }
-
 // Alexa: Search page
 struct SearchView: View {
     @State private var searchText = ""
     @State private var ingredients = [Ingredient]()
     
-
+    var filteredIngredients: [Ingredient] {
+            if searchText.isEmpty {
+                return ingredients
+            } else {
+                return ingredients.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+            }
+        }
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -46,50 +62,31 @@ struct SearchView: View {
         }
     }
 //api key = pjhbzbCk8DPYCJ6eFzt60gC2wUXQ1fui6EhsQhIj
-    func fetchIngredientData(for ingredientName: String, completion: @escaping (Ingredient) -> Void) {
-    let urlString = "https://api.nal.usda.gov/fdc/v1/foods/search?query=\(ingredientName)&pageSize=1&api_key=pjhbzbCk8DPYCJ6eFzt60gC2wUXQ1fui6EhsQhIj"
-    guard let url = URL(string: urlString) else { return }
+    func fetchIngredients() {
+        guard let url = URL(string: "https://api.nal.usda.gov/fdc/v1/foods/search?query=\(searchText)&pageSize=5&api_key=pjhbzbCk8DPYCJ6eFzt60gC2wUXQ1fui6EhsQhIj")
+        else {
+            print("Invalid URL")
+            return
+        }
 
-    URLSession.shared.dataTask(with: url) { data, _, error in
-        if let data = data {
-            do {
-                let decoder = JSONDecoder()
-                let result = try decoder.decode(FoodSearchResult.self, from: data)
-                if let foodItem = result.foods.first {
-                    let nutrients = foodItem.foodNutrients.map { nutrient in
-                        Nutrient(name: nutrient.nutrientName, amount: nutrient.value, unit: nutrient.unitName)
-                    }
-                    let ingredient = Ingredient(name: foodItem.description, info: "Info about \(foodItem.description)", nutrients: nutrients)
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                do {
+                    let decoder = JSONDecoder()
+                    let foodData = try decoder.decode(FoodDataResponse.self, from: data)
                     DispatchQueue.main.async {
-                        completion(ingredient)
+                        self.ingredients = foodData.foods.map { food in
+                            Ingredient(name: food.description, info: "Category: \(food.foodCategory ?? "N/A")")
+                        }
                     }
+                } catch {
+                    print("Error decoding data: \(error)")
                 }
-            } catch {
-                print("Error decoding JSON:", error)
             }
-        }
-    }.resume()
+        }.resume()
+    }
 }
 
-}
-
-        struct IngredientDetailView: View {
-            var ingredient: Ingredient
-        
-            var body: some View {
-                Text(ingredient.info)
-                    .navigationTitle(ingredient.name)
-                    .padding()
-            }
-        }
-        
-        struct FoodDataResponse: Codable {
-            let foods: [Food]
-        }
-        
-        struct Food: Codable {
-            let fdcId: Int
-            let description: String
-            let foodCategory: String?
-        }
-}
