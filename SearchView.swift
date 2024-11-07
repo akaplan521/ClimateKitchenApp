@@ -45,4 +45,52 @@ struct SearchView: View {
             .navigationTitle("Search Ingredients")
         }
     }
+//api key = pjhbzbCk8DPYCJ6eFzt60gC2wUXQ1fui6EhsQhIj
+    func fetchIngredients() {
+        guard let url = URL(string: "https://api.nal.usda.gov/fdc/v1/foods/search?query=\(searchText)&pageSize=5&api_key=pjhbzbCk8DPYCJ6eFzt60gC2wUXQ1fui6EhsQhIj
+") else {
+            print("Invalid URL")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                do {
+                    let decoder = JSONDecoder()
+                    let foodData = try decoder.decode(FoodDataResponse.self, from: data)
+                    DispatchQueue.main.async {
+                        self.ingredients = foodData.foods.map { food in
+                            Ingredient(name: food.description, info: "Category: \(food.foodCategory ?? "N/A")")
+                        }
+                    }
+                } catch {
+                    print("Error decoding data: \(error)")
+                }
+            }
+        }.resume()
+    }
+}
+
+        struct IngredientDetailView: View {
+            var ingredient: Ingredient
+        
+            var body: some View {
+                Text(ingredient.info)
+                    .navigationTitle(ingredient.name)
+                    .padding()
+            }
+        }
+        
+        struct FoodDataResponse: Codable {
+            let foods: [Food]
+        }
+        
+        struct Food: Codable {
+            let fdcId: Int
+            let description: String
+            let foodCategory: String?
+        }
 }
