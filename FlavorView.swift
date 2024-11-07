@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 
 // This view will allow user to choose food Flavor desciptors, and add to settings
-struct Flavor: View {
+struct FlavorView: View {
     @EnvironmentObject var settings: Settings
     
     @State private var foodFlavor = [
@@ -100,6 +100,6 @@ struct Flavor: View {
 }
 
 #Preview {
-    Flavor().environmentObject(Settings())
+    FlavorView().environmentObject(Settings())
         
 }
