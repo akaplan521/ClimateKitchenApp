@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-// Alexa: temp cause might have dif vars
+// Alexa
 struct FoodDataResponse: Codable {
     let foods: [Food]
 }
@@ -17,6 +17,14 @@ struct Ingredient: Identifiable {
     let info: String
     var nutrients: [Nutrient]
 }
+
+struct Nutrient: Identifiable {
+    let id = UUID()
+    let name: String
+    let amount: Double
+    let unit: String
+}
+
 // Alexa: Search page
 struct SearchView: View {
     @State private var searchText = ""
@@ -79,7 +87,7 @@ struct SearchView: View {
                     let foodData = try decoder.decode(FoodDataResponse.self, from: data)
                     DispatchQueue.main.async {
                         self.ingredients = foodData.foods.map { food in
-                            Ingredient(name: food.description, info: "Category: \(food.foodCategory ?? "N/A")")
+                            Ingredient(name: food.description, info: "Category: \(food.foodCategory ?? "N/A")", nutrients: [])
                         }
                     }
                 } catch {
@@ -89,4 +97,3 @@ struct SearchView: View {
         }.resume()
     }
 }
-
