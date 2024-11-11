@@ -2,13 +2,6 @@ import SwiftUI
 import UIKit
 
 // Alexa: Individual ingredient page
-struct Nutrient: Identifiable {
-    let id = UUID()
-    let name: String
-    let amount: Double
-    let unit: String
-}
-
 struct IngredientDetailView: View {
     var ingredient: Ingredient
 
@@ -21,7 +14,7 @@ struct IngredientDetailView: View {
             Text(ingredient.info)
                 .padding()
 
-            // Display nutrients
+            //display nutrients
             Text("Nutritional Information")
                 .font(.headline)
                 .padding(.top)
@@ -42,3 +35,4 @@ struct IngredientDetailView: View {
         .navigationTitle("Ingredient Details")
     }
 }
+
