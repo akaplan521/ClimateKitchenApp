@@ -2,9 +2,14 @@ import SwiftUI
 import UIKit
 
 // Alexa: Individual ingredient page
+
+
 struct IngredientDetailView: View {
     var ingredient: Ingredient
 
+    //ids in the dataset for the nutrients we want to display; can be changed if we want to add more
+    let allowedNutrientIDs: Set<Int> = [1003, 1004, 1005, 2000, 1235, 1093, 1051]
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(ingredient.name)
@@ -14,25 +19,25 @@ struct IngredientDetailView: View {
             Text(ingredient.info)
                 .padding()
 
-            //display nutrients
+            //display nutrients idk how we want to format this
             Text("Nutritional Information")
                 .font(.headline)
                 .padding(.top)
 
             ForEach(ingredient.nutrients) { nutrient in
-                HStack {
-                    Text(nutrient.name)
-                        .font(.subheadline)
-                    Spacer()
-                    Text("\(nutrient.amount, specifier: "%.2f") \(nutrient.unit)")
-                        .font(.subheadline)
-                }
-                .padding(.horizontal)
-            }
+                            HStack {
+                                Text(nutrient.nutrientName)
+                                    .font(.subheadline)
+                                Spacer()
+                                Text("\(nutrient.value, specifier: "%.2f") \(nutrient.unitName)")
+                                    .font(.subheadline)
+                            }
+                            .padding(.horizontal)
+                        }
 
-            Spacer()
-        }
-        .navigationTitle("Ingredient Details")
-    }
-}
+                        Spacer()
+                    }
+                    .navigationTitle("Ingredient Details")
+                }
+            }
 
