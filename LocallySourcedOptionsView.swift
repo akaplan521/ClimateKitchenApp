@@ -16,27 +16,39 @@ struct LocallySourcedOptionsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     Group {
-                        Text("Market #1")
+                        Text("City Market")
                             .font(.title)
                             .foregroundColor(.blue)
-                        Text("Distance: 4 miles")
-                        Text("Hours: Monday 8-5\nTuesday 8-5\nWednesday 8-9\n...")
+                        Text("Distance: 0.9 miles")
+                        Text("82 S. Winooski Ave\nBurlington, VT")
+                        Text("Hours:\nMonday - Sunday, 7am-9pm")
                     }
                     
                     Group {
-                        Text("Market #2")
+                        Text("Always Full")
                             .font(.title)
                             .foregroundColor(.blue)
-                        Text("Distance: 9 miles")
-                        Text("Hours: Monday 7-10\nTuesday 8-11\nWednesday 8-10\n...")
+                        Text("Distance: 1.1 miles")
+                        Text("1128 Williston Rd\nSouth Burlington, VT")
+                        Text("Hours:\nMonday 10am-8pm\nTuesday-Wednesday 10:30am-8pm\nThursday-Sunday 10am-8pm")
                     }
                     
                     Group {
-                        Text("Market #3")
+                        Text("India Bazaar")
                             .font(.title)
                             .foregroundColor(.blue)
-                        Text("Distance: 146 miles")
-                        Text("Hours: Monday 1-5\nTuesday 3-5\nWednesday 11-3\n...")
+                        Text("Distance: 1.5 miles")
+                        Text("1293 Williston Rd\nSouth Burlington, VT")
+                        Text("Hours:\nMonday - Saturday, 11am-7pm\nSunday 12-5pm")
+                    }
+                    
+                    Group {
+                        Text("Burlington Farmers Market")
+                            .font(.title)
+                            .foregroundColor(.blue)
+                        Text("Distance: 1.5 miles")
+                        Text("345 Pine Street\nBurlington, VT")
+                        Text("Hours:\nSaturday, 9am-2pm\n\n")
                     }
                 }
                 .padding(.horizontal)
