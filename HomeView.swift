@@ -90,10 +90,6 @@ struct HomeView: View {
                 
                 // Little info section
                 VStack {
-                    Text("This app was designed to be...")
-                        .font(.footnote)
-                        .padding(.bottom, 10)
-                    
                     // Button to About CK
                     NavigationLink(destination: AboutUsView().navigationBarBackButtonHidden(true)) {
                         Text("About Us")
