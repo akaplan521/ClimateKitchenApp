@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-// Alexa
+
 struct FoodDataResponse: Codable {
     let foods: [Food]
 }
@@ -9,21 +9,38 @@ struct FoodDataResponse: Codable {
 struct Food: Codable {
     let description: String
     let foodCategory: String?
+    let foodNutrients: [Nutrient]  //modified Nutrient struct
+
+    enum CodingKeys: String, CodingKey {
+        case description
+        case foodCategory
+        case foodNutrients  //these need to match JSON key exactly
+    }
 }
 
 struct Ingredient: Identifiable {
     let id = UUID()
     let name: String
     let info: String
-    var nutrients: [Nutrient]
+    var nutrients: [Nutrient]  //this will map directly from "foodNutrients"
 }
 
-struct Nutrient: Identifiable {
+
+struct Nutrient: Identifiable, Codable {
     let id = UUID()
-    let name: String
-    let amount: Double
-    let unit: String
+    let nutrientId: Int
+    let nutrientName: String
+    let value: Double
+    let unitName: String
+
+    enum CodingKeys: String, CodingKey {
+        case nutrientId
+        case nutrientName
+        case value
+        case unitName
+    }
 }
+
 
 // Alexa: Search page
 struct SearchView: View {
@@ -87,7 +104,13 @@ struct SearchView: View {
                     let foodData = try decoder.decode(FoodDataResponse.self, from: data)
                     DispatchQueue.main.async {
                         self.ingredients = foodData.foods.map { food in
-                            Ingredient(name: food.description, info: "Category: \(food.foodCategory ?? "N/A")", nutrients: [])
+                            Ingredient(
+                                name: food.description,
+                                info: "Category: \(food.foodCategory ?? "N/A")",
+                                nutrients: food.foodNutrients
+                                    .filter { [1003, 1004, 1005, 2000, 1235, 1093, 1051].contains($0.nutrientId) } //these are the ids of the nutrients 
+                                //we want to display from the dataset and we can change them to add more or less.
+                                                        )
                         }
                     }
                 } catch {
@@ -96,4 +119,5 @@ struct SearchView: View {
             }
         }.resume()
     }
+
 }
