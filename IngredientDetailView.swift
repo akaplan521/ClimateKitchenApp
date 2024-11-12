@@ -7,7 +7,7 @@ import UIKit
 struct IngredientDetailView: View {
     var ingredient: Ingredient
 
-    //ids in the dataset for the nutrients we want to display; can be changed if we want to add more
+    //ids in the dataset for the nutrients we want to display; can be changed if we want to add more (jk this doesnt do anything its in search view)
     let allowedNutrientIDs: Set<Int> = [1003, 1004, 1005, 2000, 1235, 1093, 1051]
     
     var body: some View {
