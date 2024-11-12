@@ -20,6 +20,7 @@ class Settings: ObservableObject {
     @Published var texture: [String]
     @Published var rating: Int
     @Published var btuUsed: Float
+    @Published var localPercent: Float
 
     // zip code or geolocation
     @Published var location: Int
@@ -35,5 +36,6 @@ class Settings: ObservableObject {
         self.texture = []
         self.rating = 0
         self.btuUsed = 0.0
+        self.localPercent = 0.0
     }
 }

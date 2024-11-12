@@ -90,8 +90,20 @@ struct RecipeView: View {
             }
         }
         settings.rating = ratingCount
+            }
+   // calculate local percentage
+    func calculateLocal() {
+        var totalLocal = 0
+        let totalIngredients = isChecked.count
+        for ingredient in isChecked{
+            if ingredient == true{
+                totalLocal += 1
+            }
+        }
+        var tot = (Float(totalLocal) / Float(totalIngredients))
+        settings.localPercent = tot*100
+        print(settings.localPercent)
     }
-   
     
     var body: some View {
         
@@ -109,6 +121,7 @@ struct RecipeView: View {
                                                     .padding()
                             // TODO: ingredients, centered it but can change
                             Text("Ingredients").bold().frame(maxWidth: .infinity)
+                            Text("Check If Local")
                             ForEach(ingredients.indices, id: \.self) { index in
                                 HStack {
                                     // Toggle check box and if ingredient is seasonal or not
@@ -253,6 +266,11 @@ struct RecipeView: View {
                             HStack(spacing:100){
                                 // Add all the stats to profile
                                 Button("I MADE THIS"){calculateBTU ()
+                                    calculateLocal()
+                                    
+                                    
+                                }
+                                NavigationLink(destination: HomeView().environmentObject(Settings()).navigationBarBackButtonHidden(true)){
                                     
                                 }
                             }
