@@ -8,14 +8,20 @@ struct Recipe: Identifiable {
     let name: String
     let info: String
 }
-struct RecipeHomeView: View {
+struct RecipeView: View {
+    
     @State var searchText = ""
+    @State var selectedFilters: Set<String> = []
+    @State var maxNumber: String = ""
+    
     var recipes: [Recipe] = [
         Recipe(name: "Winter Squash Risotto", info: "blah risotto"),
         Recipe(name: "Viniagrette", info: "blah viniagrette"),
         Recipe(name: "Garden Salad", info: "blah salad"),
         //fake data will be from db once setup
     ]
+    
+    let filterOptions = ["Plant Based", "Gluten Free", "Vegan", "Easy", "Quick"]
     //show only ingredients with substring that was searched. not the functionality we want but is fine for now.
     var filteredRecipes: [Recipe] {
         if searchText.isEmpty {
@@ -35,7 +41,7 @@ struct RecipeHomeView: View {
                         .background(Color(.systemGray6))
                         .cornerRadius(10)
                         .padding(.horizontal)
-                    NavigationLink(destination: RecipeCreateView().navigationBarBackButtonHidden(true)) {
+                    NavigationLink(destination: SearchView().navigationBarBackButtonHidden(true)) {
                         Text("+")
                             .font(.headline)
                             .padding()
@@ -43,8 +49,35 @@ struct RecipeHomeView: View {
                             .background(Color.blue.opacity(0.2))
                             .foregroundColor(.black)
                             .cornerRadius(10)
+                    }.padding(.trailing, 15) //extra padding on the right
+                    
+                }
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(filterOptions, id: \.self) { option in
+                            Button(action: {
+                                //toggle selection for the filter optionz
+                                if selectedFilters.contains(option) {
+                                    selectedFilters.remove(option)
+                                    //if we want to pull from db every time a button is pressed or removed add a function call here
+                                } else {
+                                    selectedFilters.insert(option)
+                                    //if we want to pull from db every time a button is pressed or removed add a function call here/
+                                }
+                            }) {
+                                Text(option)
+                                    .padding()
+                                    .background(selectedFilters.contains(option) ? Color.blue.opacity(0.2) : Color(.systemGray6))
+                                    .foregroundColor(selectedFilters.contains(option) ? Color.blue : Color.primary)
+                                    .cornerRadius(8)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(selectedFilters.contains(option) ? Color.blue : Color.gray, lineWidth: 1)
+                                    )
+                            }
+                        }
                     }
-                    .padding()
+                    .padding(.horizontal)
                 }
                 //display results as clickable buttons
                 ScrollView {
@@ -67,6 +100,11 @@ struct RecipeHomeView: View {
             .navigationTitle("Search Recipes")
         }
         BottomNavigationBar()
+    }
+}
+
+
+
     }
 }
 
