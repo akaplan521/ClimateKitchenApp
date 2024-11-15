@@ -8,7 +8,7 @@ struct Recipe: Identifiable {
     let name: String
     let info: String
 }
-struct RecipeView: View {
+struct RecipeHomeView: View {
     
     @State var searchText = ""
     @State var selectedFilters: Set<String> = []
@@ -41,7 +41,7 @@ struct RecipeView: View {
                         .background(Color(.systemGray6))
                         .cornerRadius(10)
                         .padding(.horizontal)
-                    NavigationLink(destination: SearchView().navigationBarBackButtonHidden(true)) {
+                    NavigationLink(destination: RecipeCreateView().navigationBarBackButtonHidden(true)) {
                         Text("+")
                             .font(.headline)
                             .padding()
