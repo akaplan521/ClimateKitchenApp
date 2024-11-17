@@ -1,62 +1,100 @@
 import SwiftUI
 import UIKit
 
-// Cierra: Recipe Create page
 struct RecipeCreateView: View {
     //---------------------------------------------------------------------------------------
     
-    
-    //need to add prep and quantity for ingredients.
-    
-    //-----------------------------------------------------------------------------------------
-    
-    
-    // TODO: implement logic to add buttons that allows them to be properly parsed and stored
+    // TODO: add functions to call sql queries for storing in recipe db; 
+    //first well use it to create recipe/ingredient join table, then well have to change it to connect to user profiles
     // TODO: implement edit recipe functionality
     @State private var recipeName = ""
     @State private var newIngredient = ""
+    @State private var ingredientQuantity = ""
+    @State private var ingredientPrep = ""
+    @State private var ingredientFdcId = ""
     @State private var newInstruction = ""
     @State private var newNotes = ""
-    @State private var ingredients : [String] =  []
+    @State private var ingredients : [[String]] =  []
     @State private var instructions : [String] = []
     @State private var notes : [String] = []
-
+    
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationView {
-            ScrollView{
-                VStack(alignment: .leading, spacing: 20) {
-                    //enter name for recipe
+            
+            VStack(alignment: .leading, spacing: 20) {
+                //enter name for recipe
+                VStack(alignment: .leading) {
+                    Text("Recipe Name")
+                        .font(.headline)
+                        .padding(.bottom, 5) //optional spacing below the label
+
                     TextField("Enter Recipe Name", text: $recipeName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding()
-                    
+                }
+                .padding(.horizontal) //align with other sections
+                
+                ScrollView{
                     // add ingredients
                     VStack(alignment: .leading) {
                         Text("Ingredients")
                             .font(.headline)
+                            .padding(.bottom, 5) //pptional spacing below the label
                         
-                        ForEach(ingredients, id: \.self) { ingredient in
-                            TextField("", text: .constant(ingredient))
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .disabled(true)
+                        
+                        //displaying added ingredients as list
+                        ForEach(ingredients.indices, id: \.self) { index in
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text("Ingredient: \(ingredients[index][1])")
+                                    Text("Quantity: \(ingredients[index][0])")
+                                    Text("Prep: \(ingredients[index][2])")
+                                }
+                                Spacer()
+                                Button(action: {
+                                    ingredients.remove(at: index)
+                                }) {
+                                    Image(systemName: "minus.circle")
+                                        .foregroundColor(.red)
+                                }
+                            }
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
                         }
                         
-                        HStack {
-                            TextField("Add an Ingredient", text: $newIngredient)
+                        //inputting
+                        HStack(alignment: .top) {
+                            TextField("Quantity", text: $ingredientQuantity)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .frame(width: 80)
                             
-                            Button(action: {
-                                if !newIngredient.isEmpty {
-                                    ingredients.append(newIngredient)
-                                    newIngredient = ""
+                            //ingredient Search
+                            ZStack {
+                                VStack {
+                                    SearchIngredientView(
+                                        selectedIngredient: $newIngredient,
+                                        selectedFdcId: $ingredientFdcId,
+                                        searchText: $newIngredient // bound to newIngredient to sync text
+                                        
+                                    )
                                 }
-                            }) {
+                                .frame(height: 150) //limit height to keep it compact when displaying results
+                            }
+                            .frame(width: 200) //align the width of the search field with others
+                            
+                            TextField("Prep ⃰", text: $ingredientPrep)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .frame(width: 60)
+                            
+                            Button(action: addIngredient) {
                                 Image(systemName: "plus.circle")
+                                    .font(.title2)
+                                    .foregroundColor(.blue)
                             }
                         }
-                    }.padding()
+                    }.padding(.horizontal)
                     
                     // add instructions
                     VStack(alignment: .leading) {
@@ -70,6 +108,13 @@ struct RecipeCreateView: View {
                                 TextField("", text: .constant(instructions[index]))
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                                     .disabled(true)
+                                Spacer()
+                                Button(action: {
+                                    instructions.remove(at: index)
+                                }) {
+                                    Image(systemName: "minus.circle")
+                                        .foregroundColor(.red)
+                                }
                             }
                         }
                         
@@ -87,6 +132,7 @@ struct RecipeCreateView: View {
                             }
                         }
                     }.padding()
+                    
                     // add notes
                     VStack(alignment: .leading) {
                         Text("Notes")
@@ -99,6 +145,13 @@ struct RecipeCreateView: View {
                                 TextField("", text: .constant(notes[index]))
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                                     .disabled(true)
+                                Spacer()
+                                Button(action: {
+                                    notes.remove(at: index)
+                                }) {
+                                    Image(systemName: "minus.circle")
+                                        .foregroundColor(.red)
+                                }
                             }
                         }
                         
@@ -135,4 +188,20 @@ struct RecipeCreateView: View {
         .padding(.horizontal, 40)
         .padding(.bottom, 20)
     }
+    
+    func addIngredient() {
+        guard !ingredientQuantity.isEmpty && !newIngredient.isEmpty else { return }
+        
+        //add to ingredients array ; allow prep to be empty and set as empty string
+        ingredients.append([ingredientQuantity, newIngredient, ingredientPrep.isEmpty ? "" : ingredientPrep, ingredientFdcId])
+        
+        //clear input fields
+        ingredientQuantity = ""
+        newIngredient = ""
+        ingredientPrep = ""
+        ingredientFdcId = ""
+    }
+    
 }
+
+
