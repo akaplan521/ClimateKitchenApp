@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-
+// Alexa: temp cause might have dif vars
 struct FoodDataResponse: Codable {
     let foods: [Food]
 }
@@ -9,12 +9,14 @@ struct FoodDataResponse: Codable {
 struct Food: Codable {
     let description: String
     let foodCategory: String?
-    let foodNutrients: [Nutrient]  //modified Nutrient struct
-
+    let foodNutrients: [Nutrient]  // Use the modified Nutrient struct
+    let fdcId: Int  
+    
     enum CodingKeys: String, CodingKey {
         case description
         case foodCategory
-        case foodNutrients  //these need to match JSON key exactly
+        case foodNutrients
+        case fdcId  //map the JSON key directly
     }
 }
 
@@ -22,7 +24,7 @@ struct Ingredient: Identifiable {
     let id = UUID()
     let name: String
     let info: String
-    var nutrients: [Nutrient]  //this will map directly from "foodNutrients"
+    var nutrients: [Nutrient]  // This will map directly from "foodNutrients"
 }
 
 
@@ -81,7 +83,7 @@ struct SearchView: View {
                     }
                     .padding(.horizontal)
                 }
-                BottomNavigationBar()
+              //  BottomNavigationBar()
             }
             .navigationTitle("Search Ingredients")
         }
@@ -108,8 +110,7 @@ struct SearchView: View {
                                 name: food.description,
                                 info: "Category: \(food.foodCategory ?? "N/A")",
                                 nutrients: food.foodNutrients
-                                    .filter { [1003, 1004, 1005, 2000, 1235, 1093, 1051].contains($0.nutrientId) } //these are the ids of the nutrients 
-                                //we want to display from the dataset and we can change them to add more or less.
+                                    .filter { [1003, 1004, 1005, 2000, 1235, 1093, 1051].contains($0.nutrientId) } // Filter for specific nutrients
                                                         )
                         }
                     }
@@ -121,3 +122,4 @@ struct SearchView: View {
     }
 
 }
+
