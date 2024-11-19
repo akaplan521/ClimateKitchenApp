@@ -20,7 +20,7 @@ struct IngredientDetailView: View {
                 .padding()
 
             //display nutrients idk how we want to format this
-            Text("Nutritional Information")
+            Text("Nutritional Information (Per 100g)")
                 .font(.headline)
                 .padding(.top)
 
