@@ -54,7 +54,7 @@ struct SearchIngredientView: View {
             var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
             urlComponents?.queryItems = [
                 URLQueryItem(name: "query", value: searchText),
-                URLQueryItem(name: "pageSize", value: "5"),  // Adjust number of results
+                URLQueryItem(name: "pageSize", value: "8"),  // Adjust number of results
                 URLQueryItem(name: "dataType", value: "Foundation,SR Legacy"),  // Restrict to Foundation data type
                 URLQueryItem(name: "api_key", value: "pjhbzbCk8DPYCJ6eFzt60gC2wUXQ1fui6EhsQhIj")
             ]
