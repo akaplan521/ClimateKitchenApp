@@ -94,7 +94,7 @@ struct AboutUsView: View {
                 BottomNavigationBar()
             }
             //.background(Color(red: 241/255, green: 230/255, blue: 218/255))
-            .edgesIgnoringSafeArea(.all)
+            .edgesIgnoringSafeArea(.bottom)
         }
 }
 
