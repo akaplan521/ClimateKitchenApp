@@ -106,30 +106,7 @@ struct ProfileView: View {
             Spacer()
             
             // Bottom navigation bar
-            HStack {
-                Spacer()
-                Image(systemName: "house")
-                    .resizable()
-                    .frame(width: 30, height: 30)
-                
-                Spacer()
-                Image(systemName: "magnifyingglass")
-                    .resizable()
-                    .frame(width: 30, height: 30)
-                
-                Spacer()
-                Image(systemName: "book")
-                    .resizable()
-                    .frame(width: 30, height: 30)
-                
-                Spacer()
-                Image(systemName: "person.crop.circle")
-                    .resizable()
-                    .frame(width: 30, height: 30)
-                
-                Spacer()
-            }
-            .padding(.bottom, 20)
+            BottomNavigationBar()
         }
         .background(Color(UIColor.systemGray6)) // Background color
         .edgesIgnoringSafeArea(.all)
