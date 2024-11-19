@@ -83,8 +83,9 @@ struct SearchView: View {
                     }
                     .padding(.horizontal)
                 }
-              //  BottomNavigationBar()
+                BottomNavigationBar()
             }
+            .edgesIgnoringSafeArea(.bottom)
             .navigationTitle("Search Ingredients")
         }
     }
