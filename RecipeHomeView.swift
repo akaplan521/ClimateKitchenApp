@@ -9,7 +9,7 @@ struct Recipe: Identifiable {
     let info: String
 }
 
-struct RecipeView: View {
+struct RecipeHomeView: View {
     @State private var searchText = ""
     @State private var selectedFilters: Set<String> = []
     @State private var recipes: [Recipe] = []
