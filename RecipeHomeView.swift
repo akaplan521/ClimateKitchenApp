@@ -96,18 +96,13 @@ struct RecipeHomeView: View {
                     }
                     .padding(.horizontal)
                 }
+                BottomNavigationBar()
             }
+            .edgesIgnoringSafeArea(.bottom)
             .navigationTitle("Search Recipes")
         }
-        BottomNavigationBar()
     }
 }
-
-
-
-    }
-}
-
 
 // TODO: this is a backup, remove when above is finalized and stable
 struct RecipeHomeView2: View {
