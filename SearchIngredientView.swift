@@ -45,13 +45,29 @@ struct SearchIngredientView: View {
     }
 
     func fetchIngredients() {
-        guard let url = URL(string: "https://api.nal.usda.gov/fdc/v1/foods/search?query=\(searchText)&pageSize=5&api_key=pjhbzbCk8DPYCJ6eFzt60gC2wUXQ1fui6EhsQhIj") else {
-            print("Invalid URL")
-            return
-        }
+        guard let url = URL(string: "https://api.nal.usda.gov/fdc/v1/foods/search") else {
+                print("Invalid URL")
+                return
+            }
 
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
+            //query parameters
+            var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
+            urlComponents?.queryItems = [
+                URLQueryItem(name: "query", value: searchText),
+                URLQueryItem(name: "pageSize", value: "5"),  // Adjust number of results
+                URLQueryItem(name: "dataType", value: "Foundation"),  // Restrict to Foundation data type
+                URLQueryItem(name: "api_key", value: "pjhbzbCk8DPYCJ6eFzt60gC2wUXQ1fui6EhsQhIj")
+            ]
+
+            //final URL with parameters
+            guard let finalURL = urlComponents?.url else {
+                print("Error constructing URL")
+                return
+            }
+
+            //API request
+            var request = URLRequest(url: finalURL)
+            request.httpMethod = "GET"
 
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let data = data {
