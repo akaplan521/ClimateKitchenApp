@@ -11,6 +11,8 @@ struct ContentView: View {
 // Catie: Home page
 struct HomeView: View {
     let currentDate = Date()
+
+    @EnvironmentObject var settings: Settings
     
     var body: some View {
         NavigationView {
@@ -85,6 +87,67 @@ struct HomeView: View {
                         .stroke(Color.gray, lineWidth: 2)
                 )
                 .padding(.horizontal, 20)
+                
+                Spacer()
+
+                // BTUs and Local Food percentage
+                HStack() {
+                    // BTU gauge
+                    ZStack {
+                        // Background Circle
+                        Circle()
+                            .stroke(lineWidth: 10)
+                            .opacity(0.3)
+                            .foregroundColor(.gray)
+                        
+                        // Progress Arc
+                        Circle()
+                            .trim(from: 0.0, to: CGFloat(settings.btuUsed))
+                            .stroke(
+                                AngularGradient(
+                                    gradient: Gradient(colors: [.green, .yellow, .red]),
+                                    center: .center
+                                ),
+                                style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                            )
+                            .rotationEffect(Angle(degrees: -90))
+                            .animation(.easeInOut(duration: 0.5), value: settings.btuUsed)
+                        
+                        // Label
+                        Text("\(Int(settings.btuUsed)) BTUs")
+                            .bold()
+                    }
+                    .frame(width: 100, height: 100)
+                    .padding()
+                    
+                    // Local Percentage gauge
+                    ZStack {
+                        // Background Circle
+                        Circle()
+                            .stroke(lineWidth: 10)
+                            .opacity(0.3)
+                            .foregroundColor(.gray)
+                        
+                        // Progress Arc
+                        Circle()
+                            .trim(from: 0.0, to: CGFloat(settings.localPercent))
+                            .stroke(
+                                AngularGradient(
+                                    gradient: Gradient(colors: [.green, .yellow, .red]),
+                                    center: .center
+                                ),
+                                style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                            )
+                            .rotationEffect(Angle(degrees: -90))
+                            .animation(.easeInOut(duration: 0.5), value: settings.localPercent)
+                        
+                        // Label
+                        Text("\(Int(settings.localPercent))% local")
+                            .bold()
+                    }
+                    .frame(width: 100, height: 100)
+                }
+                .padding(.top, 50)
                 
                 Spacer()
                 
