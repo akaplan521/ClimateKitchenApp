@@ -87,6 +87,7 @@ struct RecipeHomeView: View {
             }
             .edgesIgnoringSafeArea(.bottom)
             .navigationTitle("Search Recipes")
+            .onAppear(perform: fetchRecipes) //call fetch on view load
         }
     }
 
