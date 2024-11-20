@@ -15,6 +15,7 @@ struct ProfileView: View {
     @State var name: String
     @State var selectedCity: String
     @State var selectedAllergies: [String]
+    @State var isSignedIn: Bool
     
     var body: some View {
         VStack {
@@ -85,11 +86,15 @@ struct ProfileView: View {
         .edgesIgnoringSafeArea(.all)
         .sheet(isPresented: $showSetupSheet, onDismiss: {
             // Ensure that all details are filled before allowing the user to proceed
-            if name.isEmpty || selectedCity.isEmpty  {
+            if !isSignedIn  {
                 showSetupSheet = true
+                if name.isEmpty || selectedCity.isEmpty {
+                    showSetupSheet = false
+                    showEditProfileSheet = true
+                }
             }
         }) {
-            EditProfileView(name: $name, selectedCity: $selectedCity, selectedAllergies: $selectedAllergies)
+            RootView()
         }
     }
 }
@@ -98,6 +103,6 @@ struct ProfileView: View {
 // Preview
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView(name: "", selectedCity: "", selectedAllergies: [])
+        ProfileView(name: "", selectedCity: "", selectedAllergies: [], isSignedIn: false)
     }
 }

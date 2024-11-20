@@ -1,33 +1,46 @@
 import SwiftUI
-import SQLite3
 import UIKit
 
-
+// Cierra: Recipe Home page
+//temp cause might have dif vars
 struct Recipe: Identifiable {
-    let id: Int
+    let id = UUID()
     let name: String
     let info: String
 }
-
 struct RecipeHomeView: View {
-    @State private var searchText = ""
-    @State private var selectedFilters: Set<String> = []
-    @State private var recipes: [Recipe] = []
+
+    @State var searchText = ""
+    @State var selectedFilters: Set<String> = []
+    @State var maxNumber: String = ""
+
+    var recipes: [Recipe] = [
+        Recipe(name: "Winter Squash Risotto", info: "blah risotto"),
+        Recipe(name: "Viniagrette", info: "blah viniagrette"),
+        Recipe(name: "Garden Salad", info: "blah salad"),
+        //fake data will be from db once setup
+    ]
 
     let filterOptions = ["Plant Based", "Gluten Free", "Vegan", "Easy", "Quick"]
-
+    //show only ingredients with substring that was searched. not the functionality we want but is fine for now.
+    var filteredRecipes: [Recipe] {
+        if searchText.isEmpty {
+            return recipes
+        }
+        else {
+            return recipes.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+        }
+    }
     var body: some View {
         NavigationView {
             VStack {
                 HStack {
                     //search Bar
-                    TextField("...search", text: $searchText, onCommit: fetchRecipes)
+                    TextField("...search", text: $searchText)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(10)
                         .padding(.horizontal)
-
-                    //navigation to RecipeCreateView
                     NavigationLink(destination: RecipeCreateView().navigationBarBackButtonHidden(true)) {
                         Text("+")
                             .font(.headline)
@@ -36,20 +49,21 @@ struct RecipeHomeView: View {
                             .background(Color.blue.opacity(0.2))
                             .foregroundColor(.black)
                             .cornerRadius(10)
-                    }.padding(.trailing, 15)
-                }
+                    }.padding(.trailing, 15) //extra padding on the right
 
-                //filter options displayed as bar
+                }
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
                         ForEach(filterOptions, id: \.self) { option in
                             Button(action: {
+                                //toggle selection for the filter optionz
                                 if selectedFilters.contains(option) {
                                     selectedFilters.remove(option)
+                                    //if we want to pull from db every time a button is pressed or removed add a function call here
                                 } else {
                                     selectedFilters.insert(option)
+                                    //if we want to pull from db every time a button is pressed or removed add a function call here/
                                 }
-                                fetchRecipes() //call fetchRecipes on any filter button pressed
                             }) {
                                 Text(option)
                                     .padding()
@@ -87,66 +101,47 @@ struct RecipeHomeView: View {
             .edgesIgnoringSafeArea(.bottom)
             .navigationTitle("Search Recipes")
         }
-    }
-
-    //fetch recipes dynamically from the db
-    func fetchRecipes() {
-        recipes = fetchRecipesFromDB(searchText: searchText, selectedFilters: selectedFilters)
+        BottomNavigationBar()
     }
 }
 
-//function to fetch recipes from SQLite
-func fetchRecipesFromDB(searchText: String, selectedFilters: Set<String>) -> [Recipe] {
-    var db: OpaquePointer?
-    let dbPath = Bundle.main.path(forResource: "ClimateKitchen", ofType: "db") ?? ""
-    
-    if sqlite3_open(dbPath, &db) != SQLITE_OK {
-        print("Failed to open database.")
-        return []
-    }
-    
-    //base  query
-    var query = "SELECT recipe_id, recipeName, instructions FROM Recipes WHERE 1=1"
-    
-    //add search text
-    if !searchText.isEmpty {
-        query += " AND recipeName LIKE '%\(searchText)%'"
-    }
-    
-    //add filter conditions
-    if selectedFilters.contains("Plant Based") {
-        query += " AND plantBased = 1"
-    }
-    if selectedFilters.contains("Gluten Free") {
-        query += " AND gf = 1"
-    }
-    if selectedFilters.contains("Vegan") {
-        query += " AND vegan = 1"
-    }
-    if selectedFilters.contains("Easy") {
-        query += " AND difficulty <= 0.5"
-    }
-    if selectedFilters.contains("Quick") {
-        query += " AND (prepTime + cookTime) <= 60"
-    }
-    
-    var statement: OpaquePointer?
-    if sqlite3_prepare_v2(db, query, -1, &statement, nil) != SQLITE_OK {
-        print("Failed to prepare statement.")
-        sqlite3_close(db)
-        return []
-    }
-    
-    var recipes: [Recipe] = []
-    while sqlite3_step(statement) == SQLITE_ROW {
-        let id = Int(sqlite3_column_int(statement, 0))
-        let name = String(cString: sqlite3_column_text(statement, 1))
-        let info = String(cString: sqlite3_column_text(statement, 2))
-        recipes.append(Recipe(id: id, name: name, info: info))
-    }
-    
-    sqlite3_finalize(statement)
-    sqlite3_close(db)
-    return recipes
-}
 
+// TODO: this is a backup, remove when above is finalized and stable
+struct RecipeHomeView2: View {
+    @State private var showRecipeCreateView = false
+    @State private var showRecipeView = false
+
+    var body: some View {
+        NavigationStack() {
+            VStack() {
+
+                // Button to Create Recipe page
+                NavigationLink(destination: RecipeCreateView().navigationBarBackButtonHidden(true)) {
+                    Text("Create a Recipe")
+                        .font(.headline)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue.opacity(0.2))
+                        .foregroundColor(.black)
+                        .cornerRadius(10)
+                }
+                .padding(.horizontal, 40)
+                .padding(.bottom, 20)
+
+                // Button to View a Recipe
+                NavigationLink(destination: RecipeView().environmentObject(Settings()).navigationBarBackButtonHidden(true)) {
+                    Text("View Recipes")
+                        .font(.headline)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue.opacity(0.2))
+                        .foregroundColor(.black)
+                        .cornerRadius(10)
+                }
+                .padding(.horizontal, 40)
+                .padding(.bottom, 20)
+            }
+        }
+        BottomNavigationBar()
+    }
+}

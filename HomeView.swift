@@ -198,7 +198,13 @@ struct BottomNavigationBar: View {
             }
             Spacer()
             // Profile
-            NavigationLink(destination: ProfileView().navigationBarBackButtonHidden(true)) {
+            NavigationLink(destination: ProfileView(
+                    name: "",
+                    selectedCity: "",
+                    selectedAllergies: [],
+                    isSignedIn: false
+                )
+                .navigationBarBackButtonHidden(true)) {
                 Image(systemName: "person.fill")
                     .foregroundColor(.black)
             }
