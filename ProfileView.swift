@@ -75,34 +75,7 @@ struct ProfileView: View {
                 }
             }
             .padding(.top, 20)
-            
-            
-            // Food Miles and Local Food percentage
-            HStack(spacing: 40) {
-                VStack {
-                    Image(systemName: "speedometer")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 60, height: 60)
-                    
-                    Text("Food Miles")
-                        .font(.caption)
-                        .padding(.top, 5)
-                }
-                
-                VStack {
-                    Image(systemName: "speedometer")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 60, height: 60)
-                    
-                    Text("% Local Food")
-                        .font(.caption)
-                        .padding(.top, 5)
-                }
-            }
-            .padding(.top, 50)
-            
+
             Spacer()
             
             // Bottom navigation bar
