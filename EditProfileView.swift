@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-
-// Edit Profile Sheet
 struct EditProfileView: View {
     @Binding var name: String
     @Binding var selectedCity: String
@@ -15,51 +13,52 @@ struct EditProfileView: View {
     
     @State private var searchText = ""
     @Environment(\.presentationMode) var presentationMode
-
     let usCities = ["Burlington, VT", "New York, NY", "Los Angeles, CA", "Chicago, IL", "Houston, TX", "Phoenix, AZ", "Denver, CO", "Miami, FL"]
-    let allergies = ["None", "Peanuts", "Tree Nuts", "Gluten", "Dairy", "Eggs", "Shellfish", "Fish", "Soy"]
+    let allergies_and_preferences = ["None", "Vegetarian", "Vegan", "Peanuts", "Gluten", "Dairy", "Eggs", "Tree Nuts", "Shellfish", "Fish", "Soy"]
     
     var filteredCities: [String] {
-        if searchText.isEmpty {
-            return usCities
-        } else {
-            return usCities.filter { $0.contains(searchText) }
-        }
+        searchText.isEmpty ? [] : usCities.filter { $0.localizedCaseInsensitiveContains(searchText) }
     }
     
     var body: some View {
         NavigationView {
-            VStack {
-                // Name Entry
-                TextField("Enter your name", text: $name)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
+            Form {
+                // Name
+                Section(header: Text("Name")) {
+                    TextField("Enter your name", text: $name)
+                        .textFieldStyle(DefaultTextFieldStyle())
+                        .autocapitalization(.words)
+                }
                 
-                // Location Entry
-                VStack {
-                    TextField("Enter your location", text: $selectedCity)
+                // Location
+                Section(header: Text("Location")) {
+                    TextField("Search for your city", text: $searchText)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding()
                     
-                    List(filteredCities, id: \.self) { city in
-                        Button(action: {
-                            selectedCity = city
-                            searchText = city
-                        }) {
-                            Text(city)
-                                .foregroundColor(.primary)
+                    if !filteredCities.isEmpty {
+                        List(filteredCities, id: \.self) { city in
+                            Button(action: {
+                                selectedCity = city
+                                searchText = ""
+                            }) {
+                                Text(city)
+                                    .foregroundColor(.primary)
+                            }
                         }
+                        .frame(maxHeight: 150)
+                    }
+                    
+                    if !selectedCity.isEmpty {
+                        Text("Selected City: \(selectedCity)")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
                     }
                 }
                 
-                // Allergies Selection
-                VStack {
-                    Text("Select any allergies:")
-                        .font(.headline)
-                        .padding(.top)
-                    
-                    List(allergies, id: \.self) { allergy in
-                        Toggle(allergy, isOn: Binding(
+                // Allergies & Dietary
+                Section(header: Text("Allergies & Dietary Preferences")) {
+                    ForEach(allergies_and_preferences, id: \.self) { allergy in
+                        Toggle(isOn: Binding(
                             get: {
                                 if allergy == "None" {
                                     return selectedAllergies.isEmpty
@@ -74,30 +73,51 @@ struct EditProfileView: View {
                                     }
                                 } else if newValue {
                                     selectedAllergies.append(allergy)
+                                    selectedAllergies.removeAll { $0 == "None" }
                                 } else {
                                     selectedAllergies.removeAll { $0 == allergy }
                                 }
                             }
-                        ))
+                        )) {
+                            Text(allergy)
+                        }
                     }
                 }
                 
                 // Done Button
-                Button(action: {
-                    if !name.isEmpty && !selectedCity.isEmpty {
-                        presentationMode.wrappedValue.dismiss()
+                Section {
+                    Button(action: {
+                        if !name.isEmpty && !selectedCity.isEmpty {
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                    }) {
+                        Text("Save Changes")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
                     }
-                }) {
-                    Text("Done")
-                        .font(.headline)
-                        .frame(width: 200, height: 50)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+                    .padding()
                 }
-                .padding(.top, 20)
             }
-            .navigationTitle("Edit Your Profile")
+            .navigationTitle("Edit Profile")
         }
     }
 }
+    
+struct EditProfileView_Previews: PreviewProvider {
+    @State static var previewName = ""
+    @State static var previewCity = ""
+    @State static var previewAllergies: [String] = [""]
+    static var previews: some View {
+        EditProfileView(
+            name: $previewName,
+            selectedCity: $previewCity,
+            selectedAllergies: $previewAllergies
+        )
+    }
+}
+
+
