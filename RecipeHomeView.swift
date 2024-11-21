@@ -66,17 +66,15 @@ struct RecipeHomeView: View {
                     }
                     .padding(.horizontal)
                 }
-                //display results as clickable buttons
+                //display search results as clickable buttons
                 ScrollView {
                     VStack(spacing: 10) {
                         ForEach(recipes) { recipe in
-                            Button(action: {
-                                //TODO: nav to recipe "page"
-                            }) {
+                            NavigationLink(destination: RecipeInView(recipeId: recipe.id)) { //change view name
                                 Text(recipe.name)
                                     .padding()
                                     .frame(maxWidth: .infinity)
-                                    .background(index == 0 ? Color(.systemBlue).opacity(0.3) : Color(.systemGray5))
+                                    .background(Color(.systemGray5))
                                     .cornerRadius(10)
                             }
                         }
