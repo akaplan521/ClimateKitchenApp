@@ -12,16 +12,83 @@
 import SwiftUI
 import SQLite3
 
+// how to make a check box https://www.appcoda.com/swiftui-checkbox/
+// TODO: will change this to style we want
+struct CheckboxToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            
+            RoundedRectangle(cornerRadius: 5.0)
+                .stroke(lineWidth: 2)
+                .frame(width: 25, height: 25)
+                .cornerRadius(5.0)
+                .overlay {
+                    Image(systemName: configuration.isOn ? "checkmark" : "")
+                }
+                .onTapGesture {
+                    withAnimation(.spring()) {
+                        configuration.isOn.toggle()
+                    }
+                }
+            configuration.label
+        }
+    }
+}
+
+
 struct RecipeInView: View {
+    @EnvironmentObject var settings: Settings
     let recipeId: Int
     @State private var instructions: String = ""
     @State private var ingredients: [(id: Int, name: String, quantity: String, prep: String)] = []
     @State private var name: String = ""
     @State private var notes: String = ""
+    @State private var isChecked: [Bool] = []
+    @State var prepTime = 0
+    @State var cookTime = 0
+    @State private var showReviewView = false
+    @State private var preheatTime: Int?
+    // This calculates the BTU used from appliance type, preheat time, and cook time
+    func calculateBTU (){
+        // default BTUs
+        if preheatTime == nil {
+            preheatTime = 0
+        }
+        
+        else if settings.applianceType == "Gas"{
+            settings.btuUsed = 300.0 * Float(preheatTime! + cookTime)
+        }
+        
+        else if settings.applianceType == "Electric"{
+            settings.btuUsed = 130.883925 * Float(preheatTime! + cookTime)
+        }
+        
+        else if settings.applianceType == "Induction"{
+            settings.btuUsed = 283.33333 * Float(preheatTime! + cookTime)
+            
+        }
+        print(settings.btuUsed)
+    }
+    
+    // calculate local percentage
+    func calculateLocal() {
+        var localCount = 0
+        let totalIngredients = isChecked.count
+        for ingredient in isChecked{
+            if ingredient == true{
+                localCount += 1
+            }
+        }
+        var localPercent = (Float(localCount) / Float(totalIngredients))
+        settings.localPercent = localPercent * 100
+        print(settings.localPercent)
+    }
+   
     
     var body: some View {
         ScrollView {
             VStack {
+                
                 Text(name)
                     .font(.largeTitle).bold()
                     .padding()
@@ -32,13 +99,21 @@ struct RecipeInView: View {
                     .font(.title).bold()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
-                ForEach(ingredients, id: \.id) { ingredient in
+                
+                Text("Check For Local").frame(maxWidth: .infinity, alignment: .leading)
+                ForEach(ingredients.indices, id: \.self) { index in
+                    let ingredient = ingredients[index]
                     VStack(alignment: .leading) {
-                        Text("\(ingredient.quantity), \(ingredient.name), \(ingredient.prep)")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding([.leading, .trailing], 20)
-                            .padding(.bottom, 5)
-                    }
+                        Toggle(isOn: $isChecked[index]) {
+                            Text("\(ingredient.quantity), \(ingredient.name), \(ingredient.prep)")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding([.leading, .trailing], 20)
+                                .padding(.bottom, 5)
+                        }
+                        
+                        
+                        
+                    }.toggleStyle(CheckboxToggleStyle())
                 }
                 
                 // Instructions
@@ -69,7 +144,22 @@ struct RecipeInView: View {
                             .background(Color(.systemGray6)) //idk fix this to look good im TIRED
                     }
                 }
+                Text("Oven Preheat Time")
+                    .font(.title).bold()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                TextField("Enter Preheat Time", value: $preheatTime, formatter: NumberFormatter())
+                Button(action: {
+                    calculateBTU()
+                    calculateLocal()
+                    showReviewView = true}) {
+                    Text("I Made This!")
+                }.navigationDestination(isPresented: $showReviewView) {
+                    ReviewView().environmentObject(Settings()).navigationBarBackButtonHidden(true)
+                }
             }
+            
+            
         }
         .onAppear(perform: fetchRecipeDetails)
         //.navigationTitle("Recipe Details")        dont want this to show up at the top
@@ -82,6 +172,8 @@ struct RecipeInView: View {
         instructions = details.instructions
         notes = details.notes
         ingredients = details.ingredients
+        isChecked = Array(repeating: false, count: ingredients.count)
+        print(isChecked)
     }
 }
 func fetchRecipeDetailsFromDB(recipeId: Int) -> (name: String, instructions: String, notes: String, ingredients: [(id: Int, name: String, quantity: String, prep: String)]) {
@@ -105,6 +197,7 @@ func fetchRecipeDetailsFromDB(recipeId: Int) -> (name: String, instructions: Str
             name = String(cString: sqlite3_column_text(recipeStatement, 0))
             instructions = String(cString: sqlite3_column_text(recipeStatement, 1))
             notes = String(cString: sqlite3_column_text(recipeStatement, 2))
+            
         }
     }
     sqlite3_finalize(recipeStatement)
@@ -125,6 +218,7 @@ func fetchRecipeDetailsFromDB(recipeId: Int) -> (name: String, instructions: Str
             let quantity = String(cString: sqlite3_column_text(ingredientStatement, 2))
             let prep = String(cString: sqlite3_column_text(ingredientStatement, 3))
             ingredients.append((id: id, name: name, quantity: quantity, prep: prep))
+           
         }
     }
     sqlite3_finalize(ingredientStatement)
