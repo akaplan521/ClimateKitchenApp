@@ -34,6 +34,7 @@ struct SearchIngredientView: View {
                                     .frame(maxWidth: .infinity)
                                     .background(Color(.systemGray5))
                                     .cornerRadius(10)
+                                    .lineLimit(1) //limits text to fit on one line and ends with ...
                             }
                         }
 
