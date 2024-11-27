@@ -1,174 +1,195 @@
 //
-//  RecipeView.swift
-//  RecipeView
-//  Created by awrigh30on 10/9/24.
+//  RecipeInView.swift
+//  ClimateKitchen
 //
 
+
 import SwiftUI
-import UIKit
-
-// how to make a check box https://www.appcoda.com/swiftui-checkbox/
-// TODO: will change this to style we want
-struct CheckboxToggleStyle: ToggleStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        HStack {
-            
-            RoundedRectangle(cornerRadius: 5.0)
-                .stroke(lineWidth: 2)
-                .frame(width: 25, height: 25)
-                .cornerRadius(5.0)
-                .overlay {
-                    Image(systemName: configuration.isOn ? "checkmark" : "")
-                }
-                .onTapGesture {
-                    withAnimation(.spring()) {
-                        configuration.isOn.toggle()
-                    }
-                }
-            configuration.label
-        }
-    }
-}
-
+import SQLite3
 
 struct RecipeView: View {
-    @EnvironmentObject var settings: Settings
-    @State private var showReviewView = false
-    @State private var seasonal = [true, true,true, false, false]
-    @State private var fillColor = [Color.black,Color.black,Color.black,Color.black,Color.black]
-    @State private var isEditing = false
-    @State private var isTapped = false
-    @State private var preheatTime: Int?
-    @State private var isChecked = [false,false,false,false, false]
+    let recipeId: Int
+    @State private var instructions: String = ""
+    @State private var ingredients: [(id: Int, name: String, quantity: String, prep: String)] = []
+    @State private var name: String = ""
+    @State private var notes: String = ""
+    @State private var spice: Int = 0
+    @State private var temp: Int = 0
+    @State private var likes: Int = 0
+    @State private var dislikes: Int = 0
+    @State private var made: Int = 0
+    @State private var difficulty: Int = 0
     
-    let ingredients = [("1","Carrot"), ("2-3","Beets"),("1", "Parsnip"),("3-4 T","Olive Oil" ), ("Dash", "Salt")]
-    let recipeTitle = "Roasted Root Vegetables"
-    let prepTime = 20
-    let cookTime = 30
-    let instructions = [("1.", "Preheat the oven to 425°F."),
-                        ("2.","Wash, peel and cut veggies."),
-                        ("3.", "On a low-sided baking sheet, toss veggies together with salt and olive oil. Spread them out and roast until browned and tender, 25-30 minutes.")]
-    // This calculates the BTU used from appliance type, preheat time, and cook time
-    func calculateBTU (){
-        // default BTUs
-        if preheatTime == nil {
-            preheatTime = 0
-        }
-        
-        else if settings.applianceType == "Gas"{
-            settings.btuUsed = 300.0 * Float(preheatTime! + cookTime)
-        }
-        
-        else if settings.applianceType == "Electric"{
-            settings.btuUsed = 130.883925 * Float(preheatTime! + cookTime)
-        }
-        
-        else if settings.applianceType == "Induction"{
-            settings.btuUsed = 283.33333 * Float(preheatTime! + cookTime)
-            
-        }
-        print(settings.btuUsed)
-    }
-    
-    // calculate local percentage
-    func calculateLocal() {
-        var localCount = 0
-        let totalIngredients = isChecked.count
-        for ingredient in isChecked{
-            if ingredient == true{
-                localCount += 1
-            }
-        }
-        var localPercent = (Float(localCount) / Float(totalIngredients))
-        settings.localPercent = localPercent * 100
-        print(settings.localPercent)
-    }
-   
     
     var body: some View {
-        
-        NavigationStack {
-            VStack() {
-                Text(recipeTitle).font(.largeTitle)
-                VStack{
-                    HStack(){
-                        // Show ingredients and instructions in list view
-                        List {
-                            // insert image
-                            Image(uiImage: UIImage(named: "roasted_root.jpg")!)
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fit)
-                                                    .padding()
-                            // ingredients, centered it but can change
-                            Text("Ingredients").bold().frame(maxWidth: .infinity)
-                            ForEach(ingredients.indices, id: \.self) { index in
-                                HStack {
-                                    // Toggle check box and if ingredient is seasonal or not
-                                    // TODO: change color to display image
-                                    Toggle(isOn: $isChecked[index]) {
-                                        if seasonal[index] == true{
-                                            Text(self.ingredients[index].0)
-                                            NavigationLink(destination: NutrientView()) {
-                                                    Text(ingredients[index].1)
-                                            }
-                                                }
-                                            else{
-                                                Text(self.ingredients[index].0)
-                                                NavigationLink(destination: NutrientView()) {
-                                                    Text(ingredients[index].1)
-                                                }
-                                        }
-                                        
-                                    }.toggleStyle(CheckboxToggleStyle())
-                                }
-                            }
-                            
-                            // instructions, centered it but can change
-                            Text("Instructions").bold().frame(maxWidth: .infinity)
-                            ForEach(instructions.indices, id: \.self) { index in
-                                // if instrucstions contain oven or stove, but can be other appliances
-                                // allow user to choose appliance type
-                                HStack {
-                                    if instructions[index].1.contains("oven") || instructions[index].1.contains("stove") {
-                                        Text(self.instructions[index].0)
-                                        Text(self.instructions[index].1)
-                                        NavigationLink(destination: ApplianceView().environmentObject(Settings())) {
-                                            Text("Appliance Type")
-                                        }
-                                        
-                                    }
-                                    // if it doesnt have the key word oven or stove
-                                    else {
-                                        Text(self.instructions[index].0)
-                                        Text(self.instructions[index].1)
-                                    }
-                                    
-                                }
-                            }
-                            TextField("Oven Preheat Time", value: $preheatTime, formatter: NumberFormatter())
-
-                            
-                            Button(action: {
-                                calculateBTU()
-                                calculateLocal()
-                                showReviewView = true}) {
-                                Text("I Made This!")
-                            }.navigationDestination(isPresented: $showReviewView) {
-                                ReviewView().environmentObject(Settings()).navigationBarBackButtonHidden(true)
-                            }
-                            
+        ScrollView {
+            VStack {
+                Text(name)
+                    .font(.largeTitle).bold()
+                    .padding()
+                
+                // Spice and temp ratings
+                HStack(spacing: 20) { // Space between spice and temp symbols
+                    //spice
+                    HStack(spacing: 5) {
+                        ForEach(0..<5) { index in
+                            Text(index < spice ? "🌶️" : "⚪️")
+                            .font(.title)
                         }
-                        
+                    }
+                    
+                    //temp
+                    HStack(spacing: 5) {
+                        ForEach(0..<5) { index in
+                            Image(systemName: index < temp ? "flame.fill" : "flame")
+                                .foregroundColor(index < temp ? .orange : .gray)
+                                .font(.title)
+                        }
                     }
                 }
+                .padding()
+                
+                //likes and dislikes
+                HStack(spacing: 20) { // Space between likes and dislikes symbols
+                    //difficulty
+                    Text("Difficulty: \(difficulty)/5")
+                    //likes
+                    HStack(spacing: 5) {
+                        Image(systemName: "hand.thumbsup.fill")
+                        Text("\(likes)")
+                    }
+                    
+                    //dislikes
+                    HStack(spacing: 5) {
+                        Image(systemName: "hand.thumbsdown.fill")
+                        Text("\(dislikes)")
+                    }
+                    //madecount
+                    Text("(\(made))")
+                }
+                
+                
+                
+                // ingredients
+                Text("Ingredients")
+                    .font(.title).bold()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                ForEach(ingredients, id: \.id) { ingredient in
+                    VStack(alignment: .leading) {
+                        Text("\(ingredient.quantity), \(ingredient.name), \(ingredient.prep)")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding([.leading, .trailing, .bottom], 20)
+                    }
+                }
+                
+                //instructions
+                let instructionSplit = instructions.split(separator: "+").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                Text("Instructions")
+                    .font(.title).bold()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                ForEach(Array(instructionSplit.enumerated()), id: \.offset) { index, instruction in
+                    VStack(alignment: .leading) {
+                        Text("\(index + 1). \(instruction)")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding([.leading, .trailing, .bottom], 20)
+                    }
+                }
+                
+                //notes
+                let noteSplit = notes.split(separator: "+").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                Text("Notes")
+                    .font(.title).bold()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                ForEach(noteSplit, id: \.self) { note in
+                    VStack(alignment: .leading) {
+                        Text(note)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding([.leading, .trailing, .bottom], 20)
+                            .background(Color(.systemGray6)) //idk fix this to look good im TIRED
+                    }
+                }
+                
+                
             }
-            
         }
-    
+        .onAppear(perform: fetchRecipeDetails)
+        //.navigationTitle("Recipe Details")        dont want this to show up at the top
     }
     
-   
+    //fetch recipe details
+    func fetchRecipeDetails() {
+        let details = fetchRecipeDetailsFromDB(recipeId: recipeId)
+        name = details.name
+        instructions = details.instructions
+        notes = details.notes
+        ingredients = details.ingredients
+        spice = details.spice
+        temp = details.temp
+        likes = details.likes
+        dislikes = details.dislikes
+        difficulty = details.difficulty
+    }
 }
-
-
-
+func fetchRecipeDetailsFromDB(recipeId: Int) -> (name: String, instructions: String, notes: String, ingredients: [(id: Int, name: String, quantity: String, prep: String)], spice: Int, temp: Int, likes: Int, dislikes: Int, made: Int, difficulty: Int) {
+    var db: OpaquePointer?
+    let dbPath = Bundle.main.path(forResource: "ClimateKitchen", ofType: "db") ?? ""
+    
+    if sqlite3_open(dbPath, &db) != SQLITE_OK {
+        print("Failed to open database.")
+        return ("", "", "", [], 0, 0, 0, 0, 0, 0)
+    }
+    
+    //query for recipe details
+    let recipeQuery = "SELECT recipeName, instructions, notes, spice, temp, likes, dislikes, made, difficulty FROM Recipes WHERE recipe_id = \(recipeId)"
+    var recipeStatement: OpaquePointer?
+    var name = ""
+    var instructions = ""
+    var notes = ""
+    var spice = 0
+    var temp = 0
+    var likes = 0
+    var dislikes = 0
+    var made = 0
+    var difficulty = 0
+    
+    if sqlite3_prepare_v2(db, recipeQuery, -1, &recipeStatement, nil) == SQLITE_OK {
+        if sqlite3_step(recipeStatement) == SQLITE_ROW {
+            name = String(cString: sqlite3_column_text(recipeStatement, 0))
+            instructions = String(cString: sqlite3_column_text(recipeStatement, 1))
+            notes = String(cString: sqlite3_column_text(recipeStatement, 2))
+            spice = Int(sqlite3_column_int(recipeStatement, 3))
+            temp = Int(sqlite3_column_int(recipeStatement, 4))
+            likes = Int(sqlite3_column_int(recipeStatement, 5))
+            dislikes = Int(sqlite3_column_int(recipeStatement, 6))
+            made =  Int(sqlite3_column_int(recipeStatement, 6)) //check if this second argument is correct because ordering is dif but db not up to date
+            difficulty = Int(sqlite3_column_int(recipeStatement, 7)) //for this too
+        }
+    }
+    sqlite3_finalize(recipeStatement)
+    
+    // Query for recipe ingredients with quantity and prep
+    var ingredientQuery = """
+        SELECT RecipeIngredients.recipe_ingredient_id, RecipeIngredients.ingredient_name, RecipeIngredients.quantity, RecipeIngredients.prep
+        FROM RecipeIngredients
+        WHERE RecipeIngredients.recipe_id = \(recipeId)
+        """
+    var ingredientStatement: OpaquePointer?
+    var ingredients: [(id: Int, name: String, quantity: String, prep: String)] = []
+    
+    if sqlite3_prepare_v2(db, ingredientQuery, -1, &ingredientStatement, nil) == SQLITE_OK {
+        while sqlite3_step(ingredientStatement) == SQLITE_ROW {
+            let id = Int(sqlite3_column_int(ingredientStatement, 0))
+            let name = String(cString: sqlite3_column_text(ingredientStatement, 1))
+            let quantity = String(cString: sqlite3_column_text(ingredientStatement, 2))
+            let prep = String(cString: sqlite3_column_text(ingredientStatement, 3))
+            ingredients.append((id: id, name: name, quantity: quantity, prep: prep))
+        }
+    }
+    sqlite3_finalize(ingredientStatement)
+    
+    sqlite3_close(db)
+    return (name, instructions, notes, ingredients, spice, temp, likes, dislikes, made, difficulty)
+}
