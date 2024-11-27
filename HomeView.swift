@@ -13,7 +13,6 @@ struct ContentView: View {
 // Catie: Home page
 struct HomeView: View {
     let currentDate = Date()
-
     @EnvironmentObject var settings: Settings
     
     var body: some View {
@@ -34,8 +33,8 @@ struct HomeView: View {
                     // Recipe Buttons
                     VStack(spacing: 15) {
                         HStack(spacing: 15) {
-                            NavigationLink(destination: RecipeView().navigationBarBackButtonHidden(false)) {
-                                Text("Winter Squash Risotto")
+                            NavigationLink(destination: RecipeView(recipeId:1).navigationBarBackButtonHidden(false)) {
+                                Text("Carrot Soup")
                                     .font(.headline)
                                     .foregroundColor(.black)
                                     .padding()
@@ -44,8 +43,8 @@ struct HomeView: View {
                                     .cornerRadius(10)
                             }
                                 
-                            NavigationLink(destination: RecipeView().navigationBarBackButtonHidden(false)) {
-                                Text("Viniagrette")
+                            NavigationLink(destination: RecipeView(recipeId:5).navigationBarBackButtonHidden(false)) {
+                                Text("Garden Salad")
                                     .font(.headline)
                                     .foregroundColor(.black)
                                     .padding()
@@ -59,8 +58,8 @@ struct HomeView: View {
                             .font(.system(size: 30, weight: .bold))
                         
                         HStack(spacing: 15) {
-                            NavigationLink(destination: RecipeView().navigationBarBackButtonHidden(false)) {
-                                Text("Garden Salad")
+                            NavigationLink(destination: RecipeView(recipeId:15).navigationBarBackButtonHidden(false)) {
+                                Text("Pizza")
                                     .font(.headline)
                                     .foregroundColor(.black)
                                     .padding()
@@ -69,8 +68,8 @@ struct HomeView: View {
                                     .cornerRadius(10)
                             }
                             
-                            NavigationLink(destination: RecipeView().navigationBarBackButtonHidden(false)) {
-                                Text("Roasted Root Vegetables")
+                            NavigationLink(destination: RecipeView(recipeId:9).navigationBarBackButtonHidden(false)) {
+                                Text("Hummus")
                                     .font(.headline)
                                     .foregroundColor(.black)
                                     .padding()
@@ -91,7 +90,6 @@ struct HomeView: View {
                 .padding(.horizontal, 20)
                 
                 Spacer()
-
                 // BTUs and Local Food percentage
                 HStack() {
                     // BTU gauge
@@ -155,6 +153,7 @@ struct HomeView: View {
                 
                 // Little info section
                 VStack {
+                    
                     // Button to About CK
                     NavigationLink(destination: AboutUsView().navigationBarBackButtonHidden(true)) {
                         Text("About Us")
@@ -165,7 +164,19 @@ struct HomeView: View {
                             .cornerRadius(10)
                     }
                     .padding(.horizontal, 40)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 10)
+                    
+                    // Button to local options
+                    NavigationLink(destination: LocallySourcedOptionsView().navigationBarBackButtonHidden(true)) {
+                        Text("Local Options")
+                            .font(.headline)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.gray.opacity(0.2))
+                            .cornerRadius(10)
+                    }
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 10)
                 }
                 
                 BottomNavigationBar()
@@ -176,13 +187,14 @@ struct HomeView: View {
     }
 }
 
+
 // Catie: Bottom menu bar
 struct BottomNavigationBar: View {
     var body: some View {
         HStack {
             Spacer()
             // Home
-            NavigationLink(destination: HomeView().navigationBarBackButtonHidden(true)) {
+            NavigationLink(destination: HomeView().navigationBarBackButtonHidden(true).environmentObject(Settings())) {
                 Image(systemName: "house.fill")
                     .foregroundColor(.black)
             }
@@ -201,22 +213,24 @@ struct BottomNavigationBar: View {
             Spacer()
             // Profile
             NavigationLink(destination: ProfileView(
-                    name: "",
-                    selectedCity: "",
-                    selectedAllergies: [],
-                    isSignedIn: false
-                )
-                .navigationBarBackButtonHidden(true)) {
+                                name: "",
+                                selectedCity: "",
+                                selectedAllergies: [],
+                                isSignedIn: false
+                            )
+                            .navigationBarBackButtonHidden(true)) {
                 Image(systemName: "person.fill")
                     .foregroundColor(.black)
             }
             Spacer()
+            
         }
         .padding()
         .background(Color.black.opacity(0.05))
         .frame(maxWidth: .infinity)
     }
 }
+
 
 #Preview {
     ContentView().environmentObject(Settings())
