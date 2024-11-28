@@ -14,10 +14,12 @@ cursor.execute('DROP TABLE IF EXISTS UserRecipes')
 #user info table with allergies
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS UserInfo (
-    fb_id INTEGER PRIMARY KEY,
+    fb_id TEXT PRIMARY KEY,
     name TEXT,
     location TEXT,         
-    none BOOLEAN,   
+    none BOOLEAN,
+    vegetarian BOOLEAN,
+    vegan BOOLEAN,
     peanuts BOOLEAN,        
     tree_nuts BOOLEAN,   
     gluten BOOLEAN,   
@@ -25,8 +27,7 @@ CREATE TABLE IF NOT EXISTS UserInfo (
     eggs BOOLEAN,
     shellfish BOOLEAN,   
     fish BOOLEAN,        
-    soy BOOLEAN,  
-    og BOOLEAN      
+    soy BOOLEAN    
 )
 ''')
 
@@ -34,7 +35,7 @@ CREATE TABLE IF NOT EXISTS UserInfo (
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS UserRecipes (
     user_recipe_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    fb_id INTEGER,
+    fb_id TEXT,
     recipeName TEXT NOT NULL,
     instructions TEXT,
     notes TEXT,
@@ -46,7 +47,7 @@ CREATE TABLE IF NOT EXISTS UserRecipes (
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS FavRecipes (
     fav_recipe_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    fb_id INTEGER,
+    fb_id TEXT,
     user_recipe_id INT,
     FOREIGN KEY (fb_id) REFERENCES UserInfo(fb_id),
     FOREIGN KEY (user_recipe_id) REFERENCES UserRecipes(user_recipe_id)
