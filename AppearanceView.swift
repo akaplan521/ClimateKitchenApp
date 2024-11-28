@@ -8,6 +8,28 @@
 import SwiftUI
 import UIKit
 
+// how to make a check box https://www.appcoda.com/swiftui-checkbox/
+struct CheckboxToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            
+            RoundedRectangle(cornerRadius: 5.0)
+                .stroke(lineWidth: 2)
+                .frame(width: 25, height: 25)
+                .cornerRadius(5.0)
+                .overlay {
+                    Image(systemName: configuration.isOn ? "checkmark" : "")
+                }
+                .onTapGesture {
+                    withAnimation(.spring()) {
+                        configuration.isOn.toggle()
+                    }
+                }
+            configuration.label
+        }
+    }
+}
+
 // This view will allow user to choose food appearance desciptors, and add to settings
 struct AppearanceView: View {
     @EnvironmentObject var settings: Settings
