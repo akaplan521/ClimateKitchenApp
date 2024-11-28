@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SQLite3
 
 struct ProfileView: View {
     @State private var showSetupSheet = true
@@ -80,7 +81,7 @@ struct ProfileView: View {
             Spacer()
             
             // Bottom navigation bar
-            BottomNavigationBar()
+            // BottomNavigationBar()
         }
         .background(Color(UIColor.systemGray6)) // Background color
         .edgesIgnoringSafeArea(.all)

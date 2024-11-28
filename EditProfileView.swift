@@ -6,6 +6,10 @@
 //
 
 import SwiftUI
+import SQLite3
+import FirebaseAuth
+
+
 struct EditProfileView: View {
     @Binding var name: String
     @Binding var selectedCity: String
@@ -88,6 +92,13 @@ struct EditProfileView: View {
                 Section {
                     Button(action: {
                         if !name.isEmpty && !selectedCity.isEmpty {
+                            let uid = Auth.auth().currentUser?.uid ?? ""
+                                            DatabaseManager.shared.saveUserData(
+                                                uid: uid,
+                                                name: name,
+                                                location: selectedCity,
+                                                allergies: selectedAllergies
+                                            )
                             presentationMode.wrappedValue.dismiss()
                         }
                     }) {
@@ -101,11 +112,25 @@ struct EditProfileView: View {
                     }
                     .padding()
                 }
+                .onAppear {
+                    loadUserData()
+                }
+            
             }
             .navigationTitle("Edit Profile")
         }
     }
+    private func loadUserData() {
+        let uid = Auth.auth().currentUser?.uid ?? ""
+        if let userData = DatabaseManager.shared.loadUserData(uid: uid) {
+            self.name = userData.name
+            self.selectedCity = userData.location
+            self.selectedAllergies = userData.allergies
+        }
+    }
 }
+
+
     
 struct EditProfileView_Previews: PreviewProvider {
     @State static var previewName = ""

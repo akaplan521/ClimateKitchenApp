@@ -112,7 +112,7 @@ struct SignInEmailView: View {
             .padding()
             .navigationTitle("Sign In With Email")
             .navigationDestination(isPresented: $navigateToHome) {
-                HomeView().environmentObject(Settings()).navigationBarBackButtonHidden(true)
+                //HomeView().environmentObject(Settings())#.navigationBarBackButtonHidden(true)
             }
         }
     }
@@ -174,7 +174,7 @@ struct SignUpEmailView: View {
             .padding()
             .navigationTitle("Sign Up With Email")
             .navigationDestination(isPresented: $navigateToHome) {
-                HomeView().environmentObject(Settings()).navigationBarBackButtonHidden(true)
+                //HomeView().environmentObject(Settings()).navigationBarBackButtonHidden(true)
             }
         }
     }
