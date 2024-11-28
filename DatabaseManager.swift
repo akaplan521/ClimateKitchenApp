@@ -12,7 +12,7 @@ class DatabaseManager {
     static let shared = DatabaseManager()
     private var db: OpaquePointer?
 
-    private let dbPath = "ClimateKitchen.db"
+    private let dbPath = Bundle.main.path(forResource: "ClimateKitchen", ofType: "db") ?? ""
     
     private init() {
         connectToDatabase()
@@ -20,12 +20,11 @@ class DatabaseManager {
 
     // Connect to the database
     private func connectToDatabase() {
-        let fileURL = try! FileManager.default
-            .urls(for: .documentDirectory, in: .userDomainMask)
-            .first!
-            .appendingPathComponent(dbPath)
+        
+        
+        print("Connecting to database at: \(dbPath)")
 
-        if sqlite3_open(fileURL.path, &db) != SQLITE_OK {
+        if sqlite3_open(dbPath, &db) != SQLITE_OK {
             print("Error opening database")
         } else {
             print("Successfully connected to database")

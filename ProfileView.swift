@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SQLite3
+import FirebaseAuth
 
 struct ProfileView: View {
     @State private var showSetupSheet = true
@@ -83,6 +84,9 @@ struct ProfileView: View {
             // Bottom navigation bar
             // BottomNavigationBar()
         }
+        .onAppear {
+            loadUserData()
+        }
         .background(Color(UIColor.systemGray6)) // Background color
         .edgesIgnoringSafeArea(.all)
         .sheet(isPresented: $showSetupSheet, onDismiss: {
@@ -96,6 +100,14 @@ struct ProfileView: View {
             }
         }) {
             RootView()
+        }
+    }
+    private func loadUserData() {
+        let uid = Auth.auth().currentUser?.uid ?? ""
+        if let userData = DatabaseManager.shared.loadUserData(uid: uid) {
+            self.name = userData.name
+            self.selectedCity = userData.location
+            self.selectedAllergies = userData.allergies
         }
     }
 }
