@@ -1,5 +1,5 @@
 //
-//  RecipeInView.swift
+//  RecipeView.swift
 //  ClimateKitchen
 //
 
@@ -9,6 +9,8 @@ import SQLite3
 
 struct RecipeView: View {
     let recipeId: Int
+    @EnvironmentObject var settings: Settings
+    @State private var showReviewView = false
     @State private var instructions: String = ""
     @State private var ingredients: [(id: Int, name: String, quantity: String, prep: String)] = []
     @State private var name: String = ""
@@ -30,7 +32,7 @@ struct RecipeView: View {
                 
                 // Spice and temp ratings
                 HStack(spacing: 20) { // Space between spice and temp symbols
-                    //spice
+                    // spice
                     HStack(spacing: 5) {
                         ForEach(0..<5) { index in
                             Text(index < spice ? "🌶️" : "⚪️")
@@ -38,7 +40,7 @@ struct RecipeView: View {
                         }
                     }
                     
-                    //temp
+                    // temp
                     HStack(spacing: 5) {
                         ForEach(0..<5) { index in
                             Image(systemName: index < temp ? "flame.fill" : "flame")
@@ -49,22 +51,22 @@ struct RecipeView: View {
                 }
                 .padding()
                 
-                //likes and dislikes
+                // likes and dislikes
                 HStack(spacing: 20) { // Space between likes and dislikes symbols
-                    //difficulty
+                    // difficulty
                     Text("Difficulty: \(difficulty)/5")
-                    //likes
+                    // likes
                     HStack(spacing: 5) {
                         Image(systemName: "hand.thumbsup.fill")
                         Text("\(likes)")
                     }
                     
-                    //dislikes
+                    // dislikes
                     HStack(spacing: 5) {
                         Image(systemName: "hand.thumbsdown.fill")
                         Text("\(dislikes)")
                     }
-                    //madecount
+                    // madecount
                     Text("(\(made))")
                 }
                 
@@ -83,7 +85,7 @@ struct RecipeView: View {
                     }
                 }
                 
-                //instructions
+                // instructions
                 let instructionSplit = instructions.split(separator: "+").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                 Text("Instructions")
                     .font(.title).bold()
@@ -97,7 +99,7 @@ struct RecipeView: View {
                     }
                 }
                 
-                //notes
+                // notes
                 let noteSplit = notes.split(separator: "+").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                 Text("Notes")
                     .font(.title).bold()
@@ -108,18 +110,24 @@ struct RecipeView: View {
                         Text(note)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding([.leading, .trailing, .bottom], 20)
-                            .background(Color(.systemGray6)) //idk fix this to look good im TIRED
+                            .background(Color(.systemGray6)) // fix formatting if time
                     }
                 }
-                
-                
+
+                // 'i made this' button
+                Button(action: {
+                    showReviewView = true}) {
+                        Text("I Made This!")
+                    }.navigationDestination(isPresented: $showReviewView) {
+                        ReviewView().environmentObject(Settings()).navigationBarBackButtonHidden(true)
+                    }
             }
         }
         .onAppear(perform: fetchRecipeDetails)
         //.navigationTitle("Recipe Details")        dont want this to show up at the top
     }
     
-    //fetch recipe details
+    // fetch recipe details
     func fetchRecipeDetails() {
         let details = fetchRecipeDetailsFromDB(recipeId: recipeId)
         name = details.name
@@ -142,7 +150,7 @@ func fetchRecipeDetailsFromDB(recipeId: Int) -> (name: String, instructions: Str
         return ("", "", "", [], 0, 0, 0, 0, 0, 0)
     }
     
-    //query for recipe details
+    // query for recipe details
     let recipeQuery = "SELECT recipeName, instructions, notes, spice, temp, likes, dislikes, made, difficulty FROM Recipes WHERE recipe_id = \(recipeId)"
     var recipeStatement: OpaquePointer?
     var name = ""
@@ -164,8 +172,8 @@ func fetchRecipeDetailsFromDB(recipeId: Int) -> (name: String, instructions: Str
             temp = Int(sqlite3_column_int(recipeStatement, 4))
             likes = Int(sqlite3_column_int(recipeStatement, 5))
             dislikes = Int(sqlite3_column_int(recipeStatement, 6))
-            made =  Int(sqlite3_column_int(recipeStatement, 6)) //check if this second argument is correct because ordering is dif but db not up to date
-            difficulty = Int(sqlite3_column_int(recipeStatement, 7)) //for this too
+            made =  Int(sqlite3_column_int(recipeStatement, 6)) // check if this second argument is correct because ordering is dif but db not up to date
+            difficulty = Int(sqlite3_column_int(recipeStatement, 7)) //f or this too
         }
     }
     sqlite3_finalize(recipeStatement)
