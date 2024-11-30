@@ -3,6 +3,83 @@
 //  SearchTestingApp
 //
 
+//import SwiftUI
+//import UIKit
+//import CoreLocation
+//import CoreLocationUI
+//
+//struct LocallySourcedOptionsView: View {
+//    var body: some View {
+//        VStack {
+//            // Title
+//            Text("Locally-Sourced Options")
+//                .font(.largeTitle)
+//                .fontWeight(.bold)
+//                .multilineTextAlignment(.center)
+//                .padding(.top, 50)
+//            
+//            // Market info
+//            ScrollView {
+//                VStack(alignment: .leading, spacing: 20) {
+//                    Group {
+//                        Text("City Market")
+//                            .font(.title)
+//                            .foregroundColor(.blue)
+//                        Text("Distance: 0.9 miles")
+//                        Text("82 S. Winooski Ave\nBurlington, VT")
+//                        Text("Hours:\nMonday - Sunday, 7am-9pm")
+//                    }
+//                    
+//                    Group {
+//                        Text("Always Full")
+//                            .font(.title)
+//                            .foregroundColor(.blue)
+//                        Text("Distance: 1.1 miles")
+//                        Text("1128 Williston Rd\nSouth Burlington, VT")
+//                        Text("Hours:\nMonday 10am-8pm\nTuesday-Wednesday 10:30am-8pm\nThursday-Sunday 10am-8pm")
+//                    }
+//                    
+//                    Group {
+//                        Text("India Bazaar")
+//                            .font(.title)
+//                            .foregroundColor(.blue)
+//                        Text("Distance: 1.5 miles")
+//                        Text("1293 Williston Rd\nSouth Burlington, VT")
+//                        Text("Hours:\nMonday - Saturday, 11am-7pm\nSunday 12-5pm")
+//                    }
+//                    
+//                    Group {
+//                        Text("Burlington Farmers Market")
+//                            .font(.title)
+//                            .foregroundColor(.blue)
+//                        Text("Distance: 1.5 miles")
+//                        Text("345 Pine Street\nBurlington, VT")
+//                        Text("Hours:\nSaturday, 9am-2pm\n\n")
+//                    }
+//                }
+//                .padding(.horizontal)
+//                .padding(.top, 20)
+//            }
+//            
+//            BottomNavigationBar()
+//        }
+//        //.background(Color(red: 241/255, green: 230/255, blue: 218/255))
+//        .edgesIgnoringSafeArea(.bottom)
+//    }
+//}
+
+
+// this is for the API (if developed)
+//
+//  LocallySourcedOptions.swift
+//  SearchTestingApp
+//
+
+//
+//  LocallySourcedOptions.swift
+//  SearchTestingApp
+//
+
 import SwiftUI
 import CoreLocation
 import CoreLocationUI
@@ -88,7 +165,7 @@ struct LocallySourcedOptionsView: View {
     
     func fetchLocalMarkets(lat: Double, lon: Double) {
         isFetchingLocation = true
-        let urlString = "https://www.usdalocalfoodportal.com/api/farmersmarket/?apikey=QoX97uf0GS&x=\(lon)&y=\(lat)&radius=30"
+        let urlString = "https://www.usdalocalfoodportal.com/api/farmersmarket/?apikey=Br04GXHreQ&x=\(lon)&y=\(lat)&radius=30"
         
         guard let url = URL(string: urlString) else {
             errorMessage = "Invalid API URL."
@@ -96,30 +173,39 @@ struct LocallySourcedOptionsView: View {
             return
         }
         
-        URLSession.shared.dataTask(with: url) { data, response, error in
+        var request = URLRequest(url: url)
+        request.addValue("Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1", forHTTPHeaderField: "User-Agent")
+
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
                 isFetchingLocation = false
+                
                 if let error = error {
                     errorMessage = "Request error: \(error.localizedDescription)"
                     return
+                }
+                
+                if let httpResponse = response as? HTTPURLResponse {
+                    print("Status Code: \(httpResponse.statusCode)")
+                    print("Headers: \(httpResponse.allHeaderFields)")
                 }
                 
                 guard let data = data else {
                     errorMessage = "No data received."
                     return
                 }
-                print("Raw response: \(String(data: data, encoding: .utf8) ?? "Invalid Data")")
+                print(urlString)
+                print("Raw response: \(String(data: data, encoding: .utf8)?.prefix(300) ?? "Invalid Data")")
+                
                 do {
                     let decodedResponse = try JSONDecoder().decode(LocalMarketsResponse.self, from: data)
                     self.markets = decodedResponse.data
-                    print("cant decode data")
                     if self.markets.isEmpty {
                         errorMessage = "No markets found in this area."
                     }
                 } catch {
                     errorMessage = "Decoding error: \(error.localizedDescription)"
-                    print("entering cant decode block")
-                    //print("Raw response: \(String(data: data, encoding: .utf8) ?? "Invalid Data")")
                 }
             }
         }.resume()
